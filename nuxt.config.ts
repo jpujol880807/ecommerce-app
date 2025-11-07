@@ -30,5 +30,8 @@ export default defineNuxtConfig({
                 transformAssetUrls,
             },
         },
+        ssr: {
+            noExternal: ['vuetify']
+        }
     },
 });
