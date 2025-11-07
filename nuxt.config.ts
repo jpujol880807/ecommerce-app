@@ -5,6 +5,10 @@ export default defineNuxtConfig({
     build: {
         transpile: ['vuetify'],
     },
+    css: [
+        'vuetify/styles',
+        "@mdi/font/css/materialdesignicons.min.css",
+    ],
     modules: [
         (_options, nuxt) => {
             nuxt.hooks.hook('vite:extendConfig', (config) => {
