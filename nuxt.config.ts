@@ -1,5 +1,5 @@
 // nuxt.config.ts
-import vuetify from 'vite-plugin-vuetify';
+import vuetify, {transformAssetUrls} from 'vite-plugin-vuetify';
 
 export default defineNuxtConfig({
     build: {
@@ -10,16 +10,11 @@ export default defineNuxtConfig({
         '@mdi/font/css/materialdesignicons.css',
     ],
     modules: [
-        async (_options, nuxt) => {
+        (_options, nuxt) => {
             nuxt.hooks.hook('vite:extendConfig', (config) => {
-                if (config.plugins) {
-                    config.plugins.push(
-                        vuetify({
-                            autoImport: true
-                        })
-                    );
-                }
-            });
+                // @ts-expect-error
+                config.plugins.push(vuetify({ autoImport: true }))
+            })
         },
         '@pinia/nuxt',
         'nuxt-auth-utils'
@@ -32,5 +27,12 @@ export default defineNuxtConfig({
                 maxAge:  60 * 24 * 7
             }
         }
+    },
+    vite: {
+        vue: {
+            template: {
+                transformAssetUrls,
+            },
+        },
     },
 });

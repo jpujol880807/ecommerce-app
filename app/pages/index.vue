@@ -48,7 +48,7 @@
                   </v-card-text>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-img height="250" class="mx-4" src="image/13.jpg"></v-img>
+                  <v-img height="250" class="mx-4" src="/image/13.jpg"></v-img>
                 </v-col>
               </v-row>
             </v-card>
@@ -72,7 +72,7 @@
                   </v-card-text>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-img height="250" class="mx-4" src="image/14.jpg"></v-img>
+                  <v-img height="250" class="mx-4" src="/image/14.jpg"></v-img>
                 </v-col>
               </v-row>
             </v-card>
@@ -96,7 +96,7 @@
                   </v-card-text>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-img height="250" class="mx-4" src="image/15.jpg"></v-img>
+                  <v-img height="250" class="mx-4" src="/image/15.jpg"></v-img>
                 </v-col>
               </v-row>
             </v-card>
