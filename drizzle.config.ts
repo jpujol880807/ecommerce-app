@@ -23,7 +23,7 @@ const productionConfig = {
     schema: './common/infrastructure/db/drizzle/schema.ts',
     dbCredentials: {
         url: process.env.TURSO_DATABASE_URL as string,
-        authToken: process.env.TURSO_DATABASE_AUTH_TOKEN as string,
+        authToken: process.env.TURSO_AUTH_TOKEN as string,
     }
 } satisfies Config;
 

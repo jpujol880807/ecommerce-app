@@ -11,6 +11,6 @@ export default defineNuxtConfig({
         },
         env: process.env.NODE_ENV || 'development',
         sqliteDBURL: process.env.TURSO_DATABASE_URL || 'file:database/sqlite/database.sqlite',
-        sqliteDBAuthToken: process.env.TURSO_DATABASE_AUTH_TOKEN || ''
+        sqliteDBAuthToken: process.env.TURSO_AUTH_TOKEN || ''
     }
 });
