@@ -1,11 +1,11 @@
 import {defineConfig} from 'drizzle-kit';
+import 'dotenv/config';
 
-const environment = process.env.NODE_ENV || 'development';
-const credentials = environment === 'production' ? {
+const credentials = process.env.NODE_ENV === 'production' ? {
     url: process.env.TURSO_DATABASE_URL as string,
     authToken: process.env.TURSO_DATABASE_AUTH_TOKEN as string,
 } : {
-    url: 'file:database/sqlite/database.sqlite'
+    url: 'file:database/sqlite/database.sqlite',
 };
 
 export default defineConfig({

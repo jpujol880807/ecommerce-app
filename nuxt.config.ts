@@ -8,6 +8,9 @@ export default defineNuxtConfig({
             cookie: {
                 maxAge:  60 * 24 * 7
             }
-        }
+        },
+        env: process.env.NODE_ENV || 'development',
+        sqliteDBURL: process.env.TURSO_DATABASE_URL || 'file:database/sqlite/database.sqlite',
+        sqliteDBAuthToken: process.env.TURSO_DATABASE_AUTH_TOKEN || ''
     }
 });

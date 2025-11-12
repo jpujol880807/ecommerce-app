@@ -2,18 +2,18 @@ import { eq } from 'drizzle-orm';
 import { users } from '../drizzle/schema';
 import {drizzle} from 'drizzle-orm/libsql';
 
-const environment = process.env.NODE_ENV || 'development';
-const dbURL = environment === 'production'
-    ? process.env.TURSO_DATABASE_URL
-    : 'file:database/sqlite/database.sqlite';
+const config = useRuntimeConfig();
+
+const environment = config.env as string;
+
 const db = environment === 'production'
     ? drizzle({
         connection: {
-            url: dbURL as string,
-            authToken: process.env.TURSO_DATABASE_AUTH_TOKEN as string,
+            url: config.sqliteDBURL as string,
+            authToken: config.sqliteDBAuthToken as string
         }
     })
-    : drizzle(dbURL as string)
+    : drizzle(config.sqliteDBURL as string)
 
 export class SqliteUsersRepository {
     async createUser(user: {
