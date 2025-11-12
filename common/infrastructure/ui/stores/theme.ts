@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useTheme } from 'vuetify';
 
 export const useThemeStore = defineStore('theme', () => {

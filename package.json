@@ -3,20 +3,28 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
+    "build": "npm run migrations:migrate && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "migrations:make": "drizzle-kit generate",
+    "migrations:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.15",
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.11.3",
+    "drizzle-orm": "^0.44.7",
     "nuxt": "^4.2.0",
     "nuxt-auth-utils": "^0.5.25",
     "pinia": "^3.0.4",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3",
-    "vuetify-nuxt-module": "^0.18.8"
+    "vuetify-nuxt-module": "^0.18.8",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.6"
   }
 }

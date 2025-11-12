@@ -39,39 +39,39 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  product: {
-    img: string;
-    title: string;
-    price: string;
-    bio: string;
-  };
-  customClass?: string;
-}>();
+  defineProps<{
+    product: {
+      img: string;
+      title: string;
+      price: string;
+      bio: string;
+    };
+    customClass?: string;
+  }>();
 
-function formatMoney(value: number, locale = 'en-US', currency = 'USD') {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currency,
-  }).format(value);
-}
+  function formatMoney(value: number, locale = 'en-US', currency = 'USD') {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency,
+    }).format(value);
+  }
 </script>
 
 <style scoped>
-.product-description {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.badge {
-  position: absolute;
-  top: 30px;
-  left: 40px;
-  z-index: 10;
-}
-.text-decoration-line-through {
-  text-decoration: line-through;
-}
+  .product-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .badge {
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    z-index: 10;
+  }
+  .text-decoration-line-through {
+    text-decoration: line-through;
+  }
 </style>
 
