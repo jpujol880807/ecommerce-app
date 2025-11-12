@@ -11,6 +11,7 @@
         center-active
         active-class="border-primary"
         min-width="100%"
+        :show-arrows="false"
     >
       <v-slide-group-item
           v-for="(popular, index) in populars"
@@ -58,3 +59,4 @@ export default {
   })
 }
 </script>
+

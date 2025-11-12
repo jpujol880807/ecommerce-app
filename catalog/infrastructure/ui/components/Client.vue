@@ -22,6 +22,7 @@
           center-active
           active-class="border-primary"
           min-width="100%"
+          :show-arrows="false"
       >
         <v-slide-group-item
             v-for="(client, index) in clients"

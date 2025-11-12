@@ -107,9 +107,9 @@
   </v-container>
 </template>
 <script setup lang="ts">
-import Popular from "../components/Popular.vue";
-import Featured from "../components/Featured.vue";
-import Client from "../components/Client.vue";
+  definePageMeta({
+    middleware: ['auth'],
+  });
 </script>
 
 <script lang="ts">

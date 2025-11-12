@@ -1,0 +1,8 @@
+import { defineNuxtRouteMiddleware } from 'nuxt/app';
+
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  const session = useUserSession();
+  if (!session.loggedIn.value) {
+    return navigateTo('/login');
+  }
+});

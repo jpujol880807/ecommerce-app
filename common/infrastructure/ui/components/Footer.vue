@@ -18,7 +18,7 @@
             <h3>About</h3>
           </v-card-text>
           <v-card-text class="grey--text"> How it Work</v-card-text>
-          <v-card-text class="grey--text mt-n4"> Our Promrams</v-card-text>
+          <v-card-text class="grey--text mt-n4"> Our Programs</v-card-text>
           <v-card-text class="grey--text mt-n4"> Promotions</v-card-text>
           <v-card-text class="grey--text mt-n4"> Refer A Friend</v-card-text>
         </v-col>
@@ -42,8 +42,7 @@
           <v-card-text class="grey--text mt-n4">
             <v-icon size="24">
               mdi-linkedin
-            </v-icon>
-            www.linkedin.com/in/jpujol88
+            </v-icon>jpujol88
           </v-card-text>
           <v-card-text class="grey--text mt-n4"> +351 123456789</v-card-text>
         </v-col>
