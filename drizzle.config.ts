@@ -28,5 +28,6 @@ const productionConfig = {
 } satisfies Config;
 
 const config = isProduction ? productionConfig : localConfig;
+console.log('Drizzle Config Loaded:', isProduction ? 'Production' : 'Local');
 export default config;
 
