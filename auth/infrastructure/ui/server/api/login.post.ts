@@ -1,23 +1,16 @@
-import {z, ZodError} from 'zod/v4';
-import {SqliteUsersRepository} from '../../../../../common/infrastructure/db/repository/SqliteUsersRepository';
+import {validateLoginUserInput} from '~~/auth/application/users/validators/LoginUserValidator';
+import type {Container} from 'inversify';
+import {TYPES} from '~~/common/infrastructure/ioc/types';
+import type {LoginUserUseCase} from '~~/auth/application/users/use-cases/LoginUserUseCase';
+import {isDomainException} from '~~/common/domain/exceptions/DomainException';
 
-const loginSchema = z.object({
-    email: z.email(),
-    password: z.string().min(6).max(20),
-});
-
-const usersRepository = new SqliteUsersRepository();
 export default defineEventHandler(async (event) => {
     try {
-        const {email, password} = await readValidatedBody(event, loginSchema.parse);
-        const user = await usersRepository.getUserByEmail(email);
-        if (!user) {
-            throw createError({statusCode: 401, message: 'User not found with provided email'});
-        }
-        const isPasswordValid = await verifyPassword(user.passwordHash, password);
-        if (!isPasswordValid) {
-            throw createError({statusCode: 401, message: 'Invalid password please try again'});
-        }
+        const body = await readBody(event);
+        const input = validateLoginUserInput(body);
+        const container: Container = event.context.$container;
+        const loginUserUseCase = container.get<LoginUserUseCase>(TYPES.LoginUserUseCase);
+        const user = await loginUserUseCase.execute({ email: input.email, password: input.password });
         await setUserSession(event, {
             user: {
                 id: user.id,
@@ -32,14 +25,16 @@ export default defineEventHandler(async (event) => {
         // Return success response
         return {message: 'Login successful', session};
     } catch (error) {
-        const errorData = (error as any).data;
-        if (errorData instanceof ZodError) {
-           const {fieldErrors, formErrors} = z.flattenError(errorData);
-           throw createError({statusCode: 422, message: 'The data provided is not valid. Please try again', data: {fieldErrors, formErrors}});
+        if (isDomainException(error)) {
+            throw createError({
+                statusCode: error.statusCode,
+                message: error.message,
+                data: error.toJSON(),
+            });
         }
         if (error instanceof Error) {
-            throw createError({statusCode: 500, message: error.message});
+            throw createError({ statusCode: 500, message: error.message });
         }
-        throw createError({statusCode: 500, message: 'Internal Server Error'});
+        throw createError({ statusCode: 500, message: 'Internal Server Error' });
     }
 });
