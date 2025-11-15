@@ -1,5 +1,5 @@
-import {DomainException} from '../../../../common/domain/exceptions/DomainException';
-import {ExceptionType} from '../../../../common/domain/exceptions/ExceptionTypes';
+import {DomainException} from '~~/common/domain/exceptions/DomainException';
+import {ExceptionType} from '~~/common/domain/exceptions/ExceptionTypes';
 
 export class UserAlreadyExistsException extends DomainException {
     constructor(email: string) {

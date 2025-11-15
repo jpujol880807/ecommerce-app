@@ -3,12 +3,6 @@ import {Config} from 'drizzle-kit';
 import config from './environment.config';
 
 const isProduction = config.env === 'production';
-const credentials = isProduction ? {
-    url: config.sqliteDBURL as string,
-    authToken: config.sqliteDBAuthToken as string,
-} : {
-    url: config.sqliteDBURL
-};
 const localConfig = {
     dialect: 'sqlite',
     out: './common/infrastructure/db/drizzle/migrations',

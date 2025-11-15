@@ -3,8 +3,7 @@ import type {UsersRepository} from '~~/auth/domain/users/repository/UsersReposit
 import {TYPES} from '~~/common/infrastructure/ioc/types';
 import {
     InvalidCredentialsException,
-    InvalidPasswordException,
-    UserNotFoundException
+    InvalidPasswordException
 } from '~~/auth/domain/users/exceptions/UserExceptions';
 
 @injectable()
