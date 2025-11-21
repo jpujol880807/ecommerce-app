@@ -3,13 +3,17 @@ import {injectable, inject} from 'inversify';
 import {TYPES} from '~~/common/infrastructure/ioc/types';
 import {UserAlreadyExistsException, UserCreationFailedException} from '~~/auth/domain/users/exceptions/UserExceptions';
 import type {User} from '~~/auth/domain/users/entity/User';
+import type {PasswordService} from '~~/auth/domain/users/services/PasswordService';
 
 @injectable()
 export class CreateUserUseCase {
     private usersRepository: UsersRepository;
+    // @ts-ignore
     constructor(
         // @ts-ignore
-        @inject(TYPES.UsersRepository) usersRepository: UsersRepository
+        @inject(TYPES.UsersRepository) usersRepository: UsersRepository,
+        // @ts-ignore
+        @inject(TYPES.PasswordService) private passwordService: PasswordService
     ) {
         this.usersRepository = usersRepository;
     }
@@ -25,7 +29,7 @@ export class CreateUserUseCase {
             throw new UserAlreadyExistsException(input.email);
         }
 
-        const passwordHash = await hashPassword(input.password);
+        const passwordHash = await this.passwordService.hashPassword(input.password);
         const newUser = await this.usersRepository.create({
             email: input.email,
             firstName: input.firstName,

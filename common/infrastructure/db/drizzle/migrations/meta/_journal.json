@@ -8,6 +8,20 @@
       "when": 1762855833216,
       "tag": "0000_acoustic_moira_mactaggert",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1763309863019,
+      "tag": "0001_living_living_lightning",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1763649950490,
+      "tag": "0002_thick_kate_bishop",
+      "breakpoints": true
     }
   ]
 }

@@ -3,23 +3,16 @@ import { users } from '~~/common/infrastructure/db/drizzle/schema';
 import {drizzle, LibSQLDatabase} from 'drizzle-orm/libsql';
 import type {UsersRepository} from '~~/auth/domain/users/repository/UsersRepository';
 import {User} from '~~/auth/domain/users/entity/User';
-import {injectable} from 'inversify';
+import {injectable, inject} from 'inversify';
+import {DatabaseFactory} from "~~/common/infrastructure/db/drizzle/DatabaseFactory";
+import {TYPES} from "~~/common/infrastructure/ioc/types";
 
 @injectable()
 export class SqliteUsersRepository implements UsersRepository {
     private db: LibSQLDatabase<any>
-    constructor() {
-        const config = useRuntimeConfig();
-        const environment = config.env as string;
-
-        this.db = environment === 'production'
-            ? drizzle({
-                connection: {
-                    url: config.sqliteDBURL as string,
-                    authToken: config.sqliteDBAuthToken as string
-                }
-            })
-            : drizzle(config.sqliteDBURL as string)
+    // @ts-ignore
+    constructor(@inject(TYPES.SqliteDatabaseConnection) dbFactory: DatabaseFactory) {
+        this.db = dbFactory.getDatabase();
     }
     async create(user: {
         email: string;

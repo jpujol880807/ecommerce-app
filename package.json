@@ -9,7 +9,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "migrations:make": "drizzle-kit generate",
-    "migrations:migrate": "drizzle-kit migrate"
+    "migrations:migrate": "drizzle-kit migrate",
+    "db:seed": "npx tsx common/infrastructure/db/drizzle/seeders/seeder.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.15.15",

@@ -1,6 +1,3 @@
-import 'dotenv/config';
-import config from './environment.config';
-
 export default defineNuxtConfig({
     extends: ['./auth/infrastructure/ui', './catalog/infrastructure/ui', 'common/infrastructure/ui'],
     modules: ['@pinia/nuxt', 'nuxt-auth-utils', 'vuetify-nuxt-module'],
@@ -48,6 +45,9 @@ export default defineNuxtConfig({
                 maxAge:  60 * 24 * 7
             }
         },
-        ...config
+        env: process.env.NODE_ENV!! || 'development' as string,
+        sqliteDBURL: process.env.TURSO_DATABASE_URL!! as string || 'file:database/sqlite/database.sqlite',
+        sqliteDBAuthToken: process.env.TURSO_AUTH_TOKEN!! as string || '',
+        nuxtSessionPassword: process.env.NUXT_SESSION_PASSWORD!! as string || '',
     }
 });

@@ -5,13 +5,16 @@ import {
     InvalidCredentialsException,
     InvalidPasswordException
 } from '~~/auth/domain/users/exceptions/UserExceptions';
+import type {PasswordService} from '~~/auth/domain/users/services/PasswordService';
 
 @injectable()
 export class LoginUserUseCase {
     private usersRepository: UsersRepository;
     constructor(
         // @ts-ignore
-        @inject(TYPES.UsersRepository) usersRepository: UsersRepository
+        @inject(TYPES.UsersRepository) usersRepository: UsersRepository,
+        // @ts-ignore
+        @inject(TYPES.PasswordService) private passwordService: PasswordService
     ) {
         this.usersRepository = usersRepository;
     }
@@ -21,7 +24,7 @@ export class LoginUserUseCase {
         if (!user) {
             throw new InvalidCredentialsException();
         }
-        const isPasswordValid = await verifyPassword(password, user.passwordHash);
+        const isPasswordValid = await this.passwordService.verifyPassword(password, user.passwordHash);
         if (!isPasswordValid) {
             throw new InvalidPasswordException();
         }

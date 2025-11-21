@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import {Config} from 'drizzle-kit';
-import config from './environment.config';
+import {config} from './environment.config';
 
 const isProduction = config.env === 'production';
 const localConfig = {

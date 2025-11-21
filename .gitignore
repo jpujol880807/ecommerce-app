@@ -25,3 +25,5 @@ logs
 
 .infrastructure/db/sqlite/database.sqlite
 database/
+/common/infrastructure/db/drizzle/seeders/categories_with_products.json
+/common/infrastructure/db/drizzle/seeders/category-tree.json
