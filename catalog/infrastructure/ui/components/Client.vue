@@ -11,14 +11,14 @@
           </div>
         </v-card-text>
         <v-card-actions class="justify-center">
-          <v-btn icon="mdi mdi-chevron-left" @click="this.$refs.slideDealsProductGroup.scrollTo('prev')"></v-btn>
-          <v-btn icon="mdi mdi-chevron-right" @click="this.$refs.slideDealsProductGroup.scrollTo('next')"></v-btn>
+          <v-btn icon="mdi mdi-chevron-left" @click="scrollTo('prev')"></v-btn>
+          <v-btn icon="mdi mdi-chevron-right" @click="scrollTo('next')"></v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
     <v-col cols="12" sm="8" lg="9" class="mt-n10">
       <v-slide-group
-          ref="slideDealsProductGroup"
+          ref="slide-deals-product-group"
           center-active
           active-class="border-primary"
           min-width="100%"
@@ -49,8 +49,17 @@
   </v-row>
 </template>
 
-<script setup>
-import SliderProductCard from "./SliderProductCard.vue";
+<script setup lang="ts">
+import { useTemplateRef } from 'vue';
+import SliderProductCard from './SliderProductCard.vue';
+
+const slideFeaturedProductGroup = useTemplateRef('slide-deals-product-group');
+
+function scrollTo(direction: 'next' | 'prev') {
+  if (slideFeaturedProductGroup.value) {
+    slideFeaturedProductGroup.value.scrollTo(direction);
+  }
+}
 
 const { data, pending, error } = await useFetch('/api/products/deals');
 

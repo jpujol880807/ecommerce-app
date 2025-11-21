@@ -2,12 +2,12 @@
   <v-toolbar color="transparent">
     <v-toolbar-title style="min-width: 200px;">Popular Products</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn icon="mdi mdi-chevron-left" @click="this.$refs.slidePopularProductGroup.scrollTo('prev')"></v-btn>
-    <v-btn icon="mdi mdi-chevron-right" @click="this.$refs.slidePopularProductGroup.scrollTo('next')"></v-btn>
+    <v-btn icon="mdi mdi-chevron-left" @click="scrollTo('prev')"></v-btn>
+    <v-btn icon="mdi mdi-chevron-right" @click="scrollTo('next')"></v-btn>
   </v-toolbar>
   <v-col cols="12" sm="12" class="mt-n10">
     <v-slide-group
-        ref="slidePopularProductGroup"
+        ref="slide-populars-product-group"
         center-active
         active-class="border-primary"
         min-width="100%"
@@ -37,49 +37,23 @@
   </v-col>
 </template>
 
-<script setup>
-import SliderProductCard from "./SliderProductCard.vue";
-import { Product } from '~~/catalog/domain/products/entity/Product';
+<script setup lang="ts">
+import { useTemplateRef } from 'vue';
+import SliderProductCard from './SliderProductCard.vue';
 
-const { data, pending, error } = await useFetch('/api/products/populars', {
-  params: { limit: 10 }
-});
+const slideFeaturedProductGroup = useTemplateRef('slide-populars-product-group');
+
+function scrollTo(direction: 'next' | 'prev') {
+  if (slideFeaturedProductGroup.value) {
+    slideFeaturedProductGroup.value.scrollTo(direction);
+  }
+}
+
+const { data, pending, error } = await useFetch('/api/products/populars');
 
 const populars = computed(() => {
   if (!data.value?.data) return [];
-  return data.value.data.map(item => Object.assign(new Product(
-      item.id,
-      item.title,
-      item.slug,
-      item.sku,
-      item.brandId,
-      item.shortDescription,
-      item.description,
-      item.priceCents,
-      item.listPriceCents,
-      item.shippingCents,
-      item.discountPercentage,
-      item.stockCount,
-      item.isInStock,
-      item.status,
-      item.isCollection,
-      item.isDigital,
-      item.weightKg,
-      item.dimensions,
-      item.isbn,
-      item.ean,
-      item.parentAsin,
-      item.productUrl,
-      item.vendorUrl,
-      item.reviewsUrl,
-      item.fulfilledBy,
-      item.soldBy,
-      item.merchantReturns,
-      item.rating,
-      item.metadata,
-      new Date(item.createdAt),
-      new Date(item.updatedAt)
-  ), { images: item.images || [], variations: item.variations || [], categories: item.categories || [] }));
+  return data.value.data;
 });
 </script>
 

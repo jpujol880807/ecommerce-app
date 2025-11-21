@@ -2,12 +2,12 @@
   <v-toolbar color="transparent">
     <v-toolbar-title style="min-width: 200px;">Featured Products</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn icon="mdi mdi-chevron-left" @click="this.$refs.slideFeaturedProductGroup.scrollTo('prev')"></v-btn>
-    <v-btn icon="mdi mdi-chevron-right" @click="this.$refs.slideFeaturedProductGroup.scrollTo('next')"></v-btn>
+    <v-btn icon="mdi mdi-chevron-left" @click="scrollTo('prev')"></v-btn>
+    <v-btn icon="mdi mdi-chevron-right" @click="scrollTo('next')"></v-btn>
   </v-toolbar>
   <v-col cols="12" sm="12" class="mt-n10">
     <v-slide-group
-        ref="slideFeaturedProductGroup"
+        ref="slide-featured-product-group"
         center-active
         active-class="border-primary"
         min-width="100%"
@@ -37,8 +37,17 @@
   </v-col>
 </template>
 
-<script setup>
-import SliderProductCard from "./SliderProductCard.vue";
+<script setup lang="ts">
+import { useTemplateRef } from 'vue';
+import SliderProductCard from './SliderProductCard.vue';
+
+const slideFeaturedProductGroup = useTemplateRef('slide-featured-product-group');
+
+function scrollTo(direction: 'next' | 'prev') {
+  if (slideFeaturedProductGroup.value) {
+    slideFeaturedProductGroup.value.scrollTo(direction);
+  }
+}
 
 const { data, pending, error } = await useFetch('/api/products/featured');
 
