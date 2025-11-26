@@ -1,5 +1,5 @@
 import { defineNuxtRouteMiddleware, navigateTo } from 'nuxt/app';
-import { useUserSession } from '../../../../.nuxt/imports';
+import { useUserSession } from '#imports';
 
 export default defineNuxtRouteMiddleware(async () => {
     const session = useUserSession();
