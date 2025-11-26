@@ -1,6 +1,8 @@
 import {Container} from 'inversify';
 import {GetRootCategoriesUseCase} from '~~/catalog/application/categories/use-cases/GetRootCategoriesUseCase';
 import {TYPES} from '~~/common/infrastructure/ioc/types';
+import {defineEventHandler} from 'h3';
+
 
 export default defineEventHandler(async (event) => {
     const container:Container = event.context.$container;

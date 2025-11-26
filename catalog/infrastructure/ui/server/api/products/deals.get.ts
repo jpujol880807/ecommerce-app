@@ -1,6 +1,7 @@
 import {TYPES} from '~~/common/infrastructure/ioc/types';
 import {Container} from 'inversify';
 import type {GetDealsOfTheDayUseCase} from '~~/catalog/application/products/use-cases/GetDealsOfTheDayUseCase';
+import {defineEventHandler, getQuery} from 'h3';
 
 export default defineEventHandler(async (event) => {
     const container: Container = event.context.$container;

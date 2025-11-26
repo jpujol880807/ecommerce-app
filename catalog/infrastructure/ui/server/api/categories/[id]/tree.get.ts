@@ -1,7 +1,8 @@
 import { Container } from 'inversify';
-import {TYPES} from '../../../../../../../common/infrastructure/ioc/types';
-import {GetCategorySubtreeUseCase} from '../../../../../../application/categories/use-cases/GetCategorySubtreeUseCase';
-import {isDomainException} from '../../../../../../../common/domain/exceptions/DomainException';
+import {TYPES} from '~~/common/infrastructure/ioc/types';
+import {GetCategorySubtreeUseCase} from '~~/catalog/application/categories/use-cases/GetCategorySubtreeUseCase';
+import {isDomainException} from '~~/common/domain/exceptions/DomainException';
+import {defineEventHandler, getRouterParam} from 'h3';
 
 
 export default defineEventHandler(async (event) => {

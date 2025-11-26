@@ -35,7 +35,7 @@
   });
 
   const icon = computed(() => {
-    switch (props.type) {
+    switch (props.dialogType) {
       case 'success':
         return 'mdi-check-circle';
       case 'error':

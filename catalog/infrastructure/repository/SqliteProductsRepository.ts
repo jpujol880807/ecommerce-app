@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify';
-import { eq, and, inArray, sql } from 'drizzle-orm';
+import {eq, and, inArray, sql, asc, desc, count, gte, lte, like, or} from 'drizzle-orm';
 import type { LibSQLDatabase } from 'drizzle-orm/libsql';
 import { Product } from '../../domain/products/entity/Product';
 import { ProductVariation } from '../../domain/products/entity/ProductVariation';
@@ -17,7 +17,7 @@ import {
     categories
 } from '~~/common/infrastructure/db/drizzle/schema';
 import { TYPES } from '~~/common/infrastructure/ioc/types';
-import type {ProductsRepository} from '../../domain/products/repository/ProductsRepository';
+import type {ProductsRepository, SearchProductsCriteria} from '../../domain/products/repository/ProductsRepository';
 import {DatabaseFactory} from '~~/common/infrastructure/db/drizzle/DatabaseFactory';
 
 @injectable()
@@ -104,17 +104,91 @@ export class SqliteProductsRepository implements ProductsRepository {
         return Promise.all(productsList.map(p => this.hydrateProduct(p)));
     }
 
-    async search(query: string, limit = 20, offset = 0): Promise<Product[]> {
-        const productsList = await this.db
+    async search(criteria: SearchProductsCriteria): Promise<{ products: Product[]; total: number; page: number; limit: number }> {
+        const conditions = [];
+
+        if (criteria.query) {
+            conditions.push(or(
+                like(products.title, `%${criteria.query}%`),
+                like(products.description, `%${criteria.query}%`)
+            ));
+        }
+
+        if (criteria.categoryId) {
+            const productIds = await this.db
+                .select({ id: productCategories.product_id })
+                .from(productCategories)
+                .where(eq(productCategories.category_id, criteria.categoryId))
+
+            if (productIds.length) {
+                conditions.push(inArray(products.id, productIds.map(p => p.id)));
+            }
+        }
+
+        if (criteria.minRating) {
+            conditions.push(gte(products.rating, criteria.minRating));
+        }
+
+        if (criteria.minPrice) {
+            conditions.push(gte(products.price_cents, criteria.minPrice * 100));
+        }
+
+        if (criteria.maxPrice) {
+            conditions.push(lte(products.price_cents, criteria.maxPrice * 100));
+        }
+
+        if (criteria.hasDiscount) {
+            conditions.push(gte(products.discount_percentage, 1));
+        }
+
+        if (criteria.brandId) {
+            conditions.push(eq(products.brand_id, criteria.brandId));
+        }
+
+        conditions.push(eq(products.is_in_stock, 1)); // Always filter active products
+
+        const whereClause = and(...conditions);
+
+        let orderBy;
+        switch (criteria.sortBy) {
+            case 'price_asc':
+                orderBy = asc(products.price_cents);
+                break;
+            case 'price_desc':
+                orderBy = desc(products.price_cents);
+                break;
+            case 'rating':
+                orderBy = desc(products.rating);
+                break;
+            case 'newest':
+            default:
+                orderBy = desc(products.created_at);
+                break;
+        }
+
+        const offset = (criteria.page - 1) * criteria.limit;
+
+        const result = await this.db
             .select()
             .from(products)
-            .where(
-                sql`${products.title} LIKE ${'%' + query + '%'} OR ${products.description} LIKE ${'%' + query + '%'}`
-            )
-            .limit(limit)
+            .where(whereClause)
+            .orderBy(orderBy)
+            .limit(criteria.limit)
             .offset(offset);
 
-        return Promise.all(productsList.map(p => this.hydrateProduct(p)));
+        // Count total for pagination
+        const totalResult = await this.db
+            .select({ count: count() })
+            .from(products)
+            .where(whereClause);
+
+        const total = totalResult.length ? totalResult[0]!!.count : 0;
+        return {
+            products: await Promise.all(result.map(this.hydrateProduct.bind(this))),
+            total,
+            page: criteria.page,
+            limit: criteria.limit
+        };
     }
 
     async create(productData: Partial<Product>): Promise<Product> {

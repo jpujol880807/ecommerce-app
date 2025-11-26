@@ -67,6 +67,7 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
+import {definePageMeta} from '#imports';
 
 definePageMeta({
   layout: 'login',

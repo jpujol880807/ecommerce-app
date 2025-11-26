@@ -11,4 +11,7 @@ export const TYPES = {
     GetDealsOfTheDayUseCase: Symbol.for('GetDealsOfTheDayUseCase'),
     GetFeaturedProductsUseCase: Symbol.for('GetFeaturedProductsUseCase'),
     GetPopularProductsUseCase: Symbol.for('GetPopularProductsUseCase'),
+    SearchProductsUseCase: Symbol.for('SearchProductsUseCase'),
+    BrandsRepository: Symbol.for('BrandsRepository'),
+    SearchBrandsUseCase: Symbol.for('SearchBrandsUseCase'),
 };

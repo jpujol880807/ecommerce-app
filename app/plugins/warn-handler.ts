@@ -1,4 +1,5 @@
-// File: plugins/warn-handler.ts
+import { defineNuxtPlugin } from '#imports';
+
 export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp.vueApp.config.warnHandler = (msg, vm, trace) => {
         if (msg.includes('Extraneous non-props attributes')) {

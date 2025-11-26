@@ -1,5 +1,5 @@
-// File: `middleware/notAuthenticated.ts`
 import { defineNuxtRouteMiddleware, navigateTo } from 'nuxt/app';
+import { useUserSession } from '../../../../.nuxt/imports';
 
 export default defineNuxtRouteMiddleware(async () => {
     const session = useUserSession();

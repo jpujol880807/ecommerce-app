@@ -38,8 +38,9 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
+import { useTemplateRef, computed } from 'vue';
 import SliderProductCard from './SliderProductCard.vue';
+import {useFetch} from '#imports';
 
 const slideFeaturedProductGroup = useTemplateRef('slide-populars-product-group');
 

@@ -5,8 +5,18 @@
     </template>
     <v-app-bar-title class="text-no-wrap mt-4 hidden-sm-and-down" @click="navigateTo('/')" >Testing E-COMMERCE</v-app-bar-title>
     <v-spacer></v-spacer>
-    <v-text-field density="compact" variant="solo" label="Search Products" append-inner-icon="mdi-magnify" single-line
-                  rounded hide-details min-width="250px" class="mt-4"></v-text-field>
+    <v-text-field
+        density="compact"
+        variant="solo"
+        label="Search Products"
+        append-inner-icon="mdi-magnify"
+        single-line
+        rounded hide-details min-width="250px"
+        class="mt-4"
+        @click:append-inner="search"
+        v-model="searchQuery"
+        @keydown.enter="search"
+    ></v-text-field>
     <v-spacer></v-spacer>
     <v-btn class="hidden-sm-and-down" to="/login" v-if="!loggedIn">Sign In / Login</v-btn>
     <v-menu v-else :close-on-content-click="false">
@@ -45,15 +55,43 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, watch } from 'vue';
+import { navigateTo } from '#app';
+import { useRoute } from 'vue-router';
 import { useThemeStore } from '../stores/theme';
 import { useDrawerStore } from '../stores/drawer';
+import {useUserSession} from '#imports';
 
 const {loggedIn, clear} = useUserSession();
-
 const themeStore = useThemeStore();
 const drawerStore = useDrawerStore();
+const route = useRoute();
+const searchQuery = ref('');
+
 async function logout() {
   await clear();
   await navigateTo('/login');
 }
+
+async function search() {
+  await navigateTo({
+    path: '/search',
+    query: { query: searchQuery.value },
+  }, { external: true});
+}
+
+onMounted(() => {
+  if (route.query.query) {
+    searchQuery.value = String(route.query.query);
+  }
+});
+
+watch(() => route.query.query, (newQuery) => {
+  if (newQuery) {
+    searchQuery.value = String(newQuery);
+  } else {
+    searchQuery.value = '';
+  }
+});
 </script>
+

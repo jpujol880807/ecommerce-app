@@ -1,5 +1,5 @@
 <template>
-  <v-card :class="[customClass, 'mx-auto my-12 pb-4']" max-width="374">
+  <v-card :class="[customClass, 'mx-auto my-12 pb-4']" width="324" >
     <v-badge
         v-if="hydratedProduct.hasDiscount()"
         color="red"
@@ -63,9 +63,10 @@ function formatMoney(value: number, locale = 'en-US', currency = 'USD') {
 <style scoped>
 .product-description {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  height: 40px;
 }
 .badge {
   position: absolute;

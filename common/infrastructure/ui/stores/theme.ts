@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia';
-import { ref, watch } from 'vue';
-import { useTheme } from 'vuetify';
+import {defineStore} from 'pinia';
+import {ref, watch} from 'vue';
+import {useTheme} from 'vuetify';
 
 export const useThemeStore = defineStore('theme', () => {
     const theme = useTheme();
@@ -13,4 +13,6 @@ export const useThemeStore = defineStore('theme', () => {
     return {
         darkMode
     };
+}, {
+    persist: true
 });

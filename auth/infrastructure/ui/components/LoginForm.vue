@@ -66,6 +66,7 @@
 <script setup lang="ts">
 import {reactive, ref, useTemplateRef} from 'vue';
 import {z} from 'zod/v4';
+import {useUserSession, navigateTo} from '#imports';
 
 const isLoading = ref(false);
 const dialog = ref(false);
@@ -101,7 +102,6 @@ async function login() {
       method: 'POST',
       body: loginCredentials
     });
-
     await refreshSession();
     await navigateTo('/');
   } catch (error) {

@@ -1,6 +1,8 @@
+import {md3} from 'vuetify/blueprints'
+
 export default defineNuxtConfig({
     extends: ['./auth/infrastructure/ui', './catalog/infrastructure/ui', 'common/infrastructure/ui'],
-    modules: ['@pinia/nuxt', 'nuxt-auth-utils', 'vuetify-nuxt-module'],
+    modules: ['@pinia/nuxt', 'nuxt-auth-utils', 'vuetify-nuxt-module','pinia-plugin-persistedstate/nuxt'],
     experimental: {
         decorators: true
     },
@@ -29,6 +31,7 @@ export default defineNuxtConfig({
         }
     },
     typescript: {
+        tsConfig: { compilerOptions: { baseUrl: ".", }, },
         sharedTsConfig: {
             compilerOptions: {
                 experimentalDecorators: true,
@@ -49,5 +52,8 @@ export default defineNuxtConfig({
         sqliteDBURL: process.env.TURSO_DATABASE_URL!! as string || 'file:database/sqlite/database.sqlite',
         sqliteDBAuthToken: process.env.TURSO_AUTH_TOKEN!! as string || '',
         nuxtSessionPassword: process.env.NUXT_SESSION_PASSWORD!! as string || '',
+    },
+    vuetifyOptions: {
+        blueprint: md3
     }
 });

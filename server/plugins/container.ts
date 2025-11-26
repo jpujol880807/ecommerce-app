@@ -3,6 +3,7 @@ import {DatabaseFactory} from '~~/common/infrastructure/db/drizzle/DatabaseFacto
 import {TYPES} from '~~/common/infrastructure/ioc/types';
 import {ScryptPasswordService} from '~~/auth/infrastructure/services/ScryptPasswordService';
 import {PasswordService} from '~~/auth/domain/users/services/PasswordService';
+import {defineNitroPlugin, useRuntimeConfig} from '#imports';
 
 export default defineNitroPlugin((nitroApp) => {
     const config = useRuntimeConfig();

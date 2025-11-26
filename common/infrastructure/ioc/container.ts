@@ -13,6 +13,10 @@ import {SqliteProductsRepository} from '~~/catalog/infrastructure/repository/Sql
 import {GetDealsOfTheDayUseCase} from '~~/catalog/application/products/use-cases/GetDealsOfTheDayUseCase';
 import {GetFeaturedProductsUseCase} from '~~/catalog/application/products/use-cases/GetFeaturedProductsUseCase';
 import {GetPopularProductsUseCase} from '~~/catalog/application/products/use-cases/GetPopularProductsUseCase';
+import {SearchProductsUseCase} from '~~/catalog/application/products/use-cases/SearchProductsUseCase';
+import type {BrandsRepository} from '~~/catalog/domain/brands/repository/BrandsRepository';
+import {SqliteBrandsRepository} from '~~/catalog/infrastructure/repository/SqliteBrandsRepository';
+import {SearchBrandUseCase} from '~~/catalog/application/brands/use-cases/SearchBrandUseCase';
 
 const container = new Container({defaultScope: 'Singleton'});
 
@@ -37,4 +41,8 @@ container.bind<ProductsRepository>(TYPES.ProductsRepository).to(SqliteProductsRe
 container.bind<GetDealsOfTheDayUseCase>(TYPES.GetDealsOfTheDayUseCase).to(GetDealsOfTheDayUseCase);
 container.bind<GetFeaturedProductsUseCase>(TYPES.GetFeaturedProductsUseCase).to(GetFeaturedProductsUseCase);
 container.bind<GetPopularProductsUseCase>(TYPES.GetPopularProductsUseCase).to(GetPopularProductsUseCase);
+container.bind<SearchProductsUseCase>(TYPES.SearchProductsUseCase).to(SearchProductsUseCase);
+// Brands bindings
+container.bind<BrandsRepository>(TYPES.BrandsRepository).to(SqliteBrandsRepository);
+container.bind<SearchBrandUseCase>(TYPES.SearchBrandsUseCase).to(SearchBrandUseCase);
 export default container;

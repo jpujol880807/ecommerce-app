@@ -65,6 +65,8 @@
 <script setup lang="ts">
 import {reactive, ref, useTemplateRef} from 'vue';
 import {z} from 'zod/v4';
+import {useUserSession, navigateTo} from '#imports';
+
 const { loggedIn, user, fetch: refreshSession } = useUserSession()
 
 const registerSchema = z.object({
