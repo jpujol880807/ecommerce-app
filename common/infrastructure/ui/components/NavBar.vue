@@ -3,7 +3,7 @@
     <template v-slot:prepend>
       <v-app-bar-nav-icon class="mt-4" @click="drawerStore.toggle()"></v-app-bar-nav-icon>
     </template>
-    <v-app-bar-title class="text-no-wrap mt-4 hidden-sm-and-down" @click="navigateTo('/')" >Testing E-COMMERCE</v-app-bar-title>
+    <v-app-bar-title class="text-no-wrap mt-4 hidden-sm-and-down cursor-pointer" @click="navigateTo('/')" >Testing E-COMMERCE</v-app-bar-title>
     <v-spacer></v-spacer>
     <v-text-field
         density="compact"

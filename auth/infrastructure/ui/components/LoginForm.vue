@@ -68,10 +68,12 @@ import {reactive, ref, useTemplateRef} from 'vue';
 import {z} from 'zod/v4';
 import {useUserSession, navigateTo} from '#imports';
 
+type FormWithValidate = { validate: () => boolean };
+
 const isLoading = ref(false);
 const dialog = ref(false);
 const errorText = ref('Invalid email or password. Please try again.');
-const formRef = useTemplateRef('loginForm');
+const formRef = useTemplateRef<FormWithValidate>('loginForm');
 const {loggedIn, user, fetch: refreshSession} = useUserSession();
 const loginCredentials = reactive({
   email: '',
@@ -104,15 +106,18 @@ async function login() {
     });
     await refreshSession();
     await navigateTo('/');
-  } catch (error) {
-    if (error.response?._data) {
-      errorText.value = error.response?._data.message || 'Login failed. Please try again.';
+  } catch (err: unknown) {
+    const e = err as any;
+    if (e?.response?._data) {
+      errorText.value = e.response._data.message || 'Login failed. Please try again.';
+    } else if (err instanceof Error) {
+      errorText.value = err.message || 'Login failed. Please try again.';
     } else {
       errorText.value = 'Login failed. Please try again.';
     }
     dialog.value = true;
-    formRef.value.validate();
-    console.error('Login failed:', error);
+    formRef.value?.validate(); // evita TS18047
+    console.error('Login failed:', err);
   } finally {
     isLoading.value = false;
   }

@@ -67,7 +67,9 @@ import {reactive, ref, useTemplateRef} from 'vue';
 import {z} from 'zod/v4';
 import {useUserSession, navigateTo} from '#imports';
 
-const { loggedIn, user, fetch: refreshSession } = useUserSession()
+type FormWithValidate = { validate: () => boolean | Promise<boolean> };
+
+const { loggedIn, user, fetch: refreshSession } = useUserSession();
 
 const registerSchema = z.object({
   email: z.email(),
@@ -79,7 +81,7 @@ const registerSchema = z.object({
 const isLoading = ref(false);
 const dialog = ref(false);
 const errorText = ref('Register failed. Please try again.');
-const registerForm = useTemplateRef('register-form');
+const registerForm = useTemplateRef<FormWithValidate>('register-form');
 
 const nameRules = [
   (v: string) => !!v || 'Name is required',
@@ -111,15 +113,23 @@ async function register() {
     });
     await refreshSession();
     await navigateTo('/');
-  } catch (error) {
-    if (error.response?._data) {
-      errorText.value = error.response?._data.message || 'Register failed. Please try again.';
-    } else {
-      errorText.value = 'Register failed. Please try again.';
+  } catch (err: unknown) {
+    // Narrowing seguro antes de acceder a propiedades
+    let message = 'Register failed. Please try again.';
+    if (typeof err === 'object' && err !== null) {
+      // si viene de una librería que adjunta response/_data
+      const e = err as any;
+      if (e.response?._data?.message) {
+        message = e.response._data.message;
+      } else if (e instanceof Error && e.message) {
+        message = e.message;
+      }
     }
-    console.error('Register failed:', error);
+    errorText.value = message;
+    console.error('Register failed:', err);
     dialog.value = true;
-    registerForm.value.validate();
+    // Evita TS18047 y llama a validate si existe
+    await registerForm.value?.validate?.();
   } finally {
     isLoading.value = false;
   }

@@ -1,17 +1,18 @@
 <template>
   <v-card :class="[customClass, 'mx-auto my-12 pb-4']" width="324" >
     <v-badge
-        v-if="hydratedProduct.hasDiscount()"
+        v-if="hydratedProduct.discountPercentage > 0"
         color="red"
         :content="`${hydratedProduct.discountPercentage}% OFF`"
         class="badge"
     >
     </v-badge>
-    <v-img v-if="hydratedProduct.getPrimaryImage()?.urlMedium" :src="hydratedProduct.getPrimaryImage()?.urlMedium || ''" height="200" class="ma-4"></v-img>
+    <v-img v-if="hydratedProduct.primaryImageUrl" :src="hydratedProduct.primaryImageUrl || ''" height="200" class="ma-4"></v-img>
     <div v-else class="d-flex align-center justify-center ma-4" style="height: 200px;">
       <v-icon size="200">mdi mdi-image-off-outline</v-icon>
     </div>
     <v-card-item class="mt-n4">
+      <v-card-text class="text-end"><b>{{ hydratedProduct.brand?.name }}</b></v-card-text>
       <v-card-title class="text-center">{{ hydratedProduct.title }}</v-card-title>
       <v-card-text class="ma-4 text-center">
         <div class="text-center product-description">
@@ -23,16 +24,16 @@
           <span class="caption grey--text">(76 reviews)</span>
         </v-row>
         <v-row align="center" class="mx-0 mt-4 justify-center">
-          <span v-if="hydratedProduct.hasDiscount()" class="text-decoration-line-through green--text mr-2">
-            {{ formatMoney(hydratedProduct.getListPrice()) }}
+          <span v-if="hydratedProduct.discountPercentage > 0" class="text-decoration-line-through green--text mr-2">
+            {{ formatMoney(hydratedProduct.listPriceCents) }}
           </span>
           <div class="text-gray">
-            <span class="text-h6 green--text mr-2">{{ formatMoney(hydratedProduct.getPrice()) }}</span>
+            <span class="text-h6 green--text mr-2">{{ formatMoney(hydratedProduct.priceCents) }}</span>
           </div>
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="green" block :disabled="!hydratedProduct.isAvailable()">
+        <v-btn color="green" block :disabled="!hydratedProduct.isInStock">
           <v-icon left>mdi-cart</v-icon>
           Add To Cart
         </v-btn>
@@ -44,19 +45,20 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import {Product} from '~~/catalog/domain/products/entity/Product';
+import {SearchProductResult} from '~~/catalog/domain/products/entity/SearchProductResult';
 
 const props = defineProps<{
   product: any;
   customClass?: string;
 }>();
 
-const hydratedProduct = computed<Product>(() => Product.fromJSON(props.product));
+const hydratedProduct = computed<SearchProductResult>(() => new SearchProductResult(props.product));
 
 function formatMoney(value: number, locale = 'en-US', currency = 'USD') {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
-  }).format(value);
+  }).format(value/100);
 }
 </script>
 

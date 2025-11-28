@@ -1,5 +1,3 @@
-// typescript
-// common/infrastructure/db/drizzle/DatabaseFactory.ts
 import { drizzle, LibSQLDatabase } from 'drizzle-orm/libsql';
 import { injectable } from 'inversify';
 

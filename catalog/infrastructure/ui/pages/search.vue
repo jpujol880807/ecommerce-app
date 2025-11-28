@@ -213,7 +213,7 @@ async function fetchProducts() {
     };
 
     const res = await $fetch('/api/products/search', {method: 'POST', body});
-    products.value = res.products || [];
+    products.value = res.results || [];
     searchStore.total = res.total || 0;
     searchStore.page = res.page || searchStore.page;
     searchStore.limit = res.limit || searchStore.limit;

@@ -19,6 +19,7 @@ import {
 import { TYPES } from '~~/common/infrastructure/ioc/types';
 import type {ProductsRepository, SearchProductsCriteria} from '../../domain/products/repository/ProductsRepository';
 import {DatabaseFactory} from '~~/common/infrastructure/db/drizzle/DatabaseFactory';
+import {SearchProductResult} from '~~/catalog/domain/products/entity/SearchProductResult';
 
 @injectable()
 export class SqliteProductsRepository implements ProductsRepository {
@@ -289,6 +290,7 @@ export class SqliteProductsRepository implements ProductsRepository {
             productRow.slug,
             productRow.sku,
             productRow.brand_id,
+            '',
             productRow.short_description,
             productRow.description,
             productRow.price_cents,
@@ -317,6 +319,15 @@ export class SqliteProductsRepository implements ProductsRepository {
             new Date(productRow.updated_at)
         );
 
+        const brandRow = await this.db
+            .select()
+            .from(brands)
+            .where(eq(brands.id, productRow.brand_id))
+            .limit(1);
+
+        if (brandRow.length) {
+            product.brandName = brandRow[0]!!.name;
+        }
         // Cargar categorías
         const categoryRows = await this.db
             .select({
@@ -408,7 +419,7 @@ export class SqliteProductsRepository implements ProductsRepository {
         return product;
     }
 
-    async getMostExpensivePerCategory(limitPerCategory = 1): Promise<Product[]> {
+    async getMostExpensivePerCategory(limitPerCategory = 1): Promise<SearchProductResult[]> {
         const categoryRows = await this.db
             .select({ id: categories.id })
             .from(categories)
@@ -420,7 +431,7 @@ export class SqliteProductsRepository implements ProductsRepository {
             )`
         );
 
-        const results: Product[] = [];
+        const results: SearchProductResult[] = [];
         const seen = new Set<string>();
 
         for (const cat of categoryRows) {
@@ -441,14 +452,14 @@ export class SqliteProductsRepository implements ProductsRepository {
             for (const p of productRows) {
                 if (seen.has(p.products.id)) continue;
                 seen.add(p.products.id);
-                results.push(await this.hydrateProduct(p));
+                results.push(SearchProductResult.fromProduct(await this.hydrateProduct(p)));
             }
         }
 
         return results;
     }
 
-    async getGreatestDiscountPerCategory(limitPerCategory = 1): Promise<Product[]> {
+    async getGreatestDiscountPerCategory(limitPerCategory = 1): Promise<SearchProductResult[]> {
         const categoryRows = await this.db
             .select({ id: categories.id })
             .from(categories)
@@ -460,7 +471,7 @@ export class SqliteProductsRepository implements ProductsRepository {
                 )`
             );
 
-        const results: Product[] = [];
+        const results: SearchProductResult[] = [];
         const seen = new Set<string>();
 
         for (const cat of categoryRows) {
@@ -481,7 +492,7 @@ export class SqliteProductsRepository implements ProductsRepository {
             for (const p of productRows) {
                 if (seen.has(p.products.id)) continue;
                 seen.add(p.products.id);
-                results.push(await this.hydrateProduct(p));
+                results.push(SearchProductResult.fromProduct(await this.hydrateProduct(p)));
             }
         }
 
@@ -489,7 +500,7 @@ export class SqliteProductsRepository implements ProductsRepository {
     }
 
 
-    async getGreatestDiscounts(limit = 20): Promise<Product[]> {
+    async getGreatestDiscounts(limit = 20): Promise<SearchProductResult[]> {
         const productRows = await this.db
             .select()
             .from(products)
@@ -502,6 +513,7 @@ export class SqliteProductsRepository implements ProductsRepository {
             .orderBy(sql`((${products.price_cents} * ${products.discount_percentage}) / ${100}) DESC`)
             .limit(limit);
 
-        return Promise.all(productRows.map(p => this.hydrateProduct(p)));
+        const prods = await Promise.all(productRows.map(p => this.hydrateProduct(p)));
+        return prods.map(p => SearchProductResult.fromProduct(p));
     }
 }

@@ -4,8 +4,8 @@ import {drizzle, LibSQLDatabase} from 'drizzle-orm/libsql';
 import type {UsersRepository} from '~~/auth/domain/users/repository/UsersRepository';
 import {User} from '~~/auth/domain/users/entity/User';
 import {injectable, inject} from 'inversify';
-import {DatabaseFactory} from "~~/common/infrastructure/db/drizzle/DatabaseFactory";
-import {TYPES} from "~~/common/infrastructure/ioc/types";
+import {DatabaseFactory} from '~~/common/infrastructure/db/drizzle/DatabaseFactory';
+import {TYPES} from '~~/common/infrastructure/ioc/types';
 
 @injectable()
 export class SqliteUsersRepository implements UsersRepository {

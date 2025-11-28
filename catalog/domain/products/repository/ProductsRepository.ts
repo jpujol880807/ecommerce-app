@@ -1,5 +1,6 @@
 // typescript
 import { Product } from '../../products/entity/Product';
+import type {SearchProductResult} from '~~/catalog/domain/products/entity/SearchProductResult';
 
 export interface SearchProductsCriteria {
     query?: string;
@@ -26,8 +27,8 @@ export interface ProductsRepository {
     update(id: string, updates: Partial<Product>): Promise<Product | null>;
     delete(id: string): Promise<Product | null>;
 
-    getMostExpensivePerCategory(limitPerCategory?: number): Promise<Product[]>;
-    getGreatestDiscountPerCategory(limitPerCategory?: number): Promise<Product[]>;
-    getGreatestDiscounts(limit?: number): Promise<Product[]>;
+    getMostExpensivePerCategory(limitPerCategory?: number): Promise<SearchProductResult[]>;
+    getGreatestDiscountPerCategory(limitPerCategory?: number): Promise<SearchProductResult[]>;
+    getGreatestDiscounts(limit?: number): Promise<SearchProductResult[]>;
     search(criteria: SearchProductsCriteria): Promise<{ products: Product[]; total: number; page: number; limit: number }>;
 }

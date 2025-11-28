@@ -1,6 +1,6 @@
 import {injectable, inject} from 'inversify';
-import {TYPES} from '../../../../common/infrastructure/ioc/types';
-import {ProductsRepository} from '../../../domain/products/repository/ProductsRepository';
+import {TYPES} from '~~/common/infrastructure/ioc/types';
+import type {ProductsRepository} from '../../../domain/products/repository/ProductsRepository';
 
 @injectable()
 export class GetFeaturedProductsUseCase {

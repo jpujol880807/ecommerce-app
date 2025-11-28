@@ -17,6 +17,9 @@ import {SearchProductsUseCase} from '~~/catalog/application/products/use-cases/S
 import type {BrandsRepository} from '~~/catalog/domain/brands/repository/BrandsRepository';
 import {SqliteBrandsRepository} from '~~/catalog/infrastructure/repository/SqliteBrandsRepository';
 import {SearchBrandUseCase} from '~~/catalog/application/brands/use-cases/SearchBrandUseCase';
+import {FindBrandByIdUseCase} from '~~/catalog/application/brands/use-cases/FindBrandByIdUseCase';
+import type {SearchProductService} from '~~/catalog/domain/products/services/SearchProductService';
+import {AlgoliaProductSearchService} from '~~/catalog/infrastructure/services/AlgoliaProductSearchService';
 
 const container = new Container({defaultScope: 'Singleton'});
 
@@ -45,4 +48,6 @@ container.bind<SearchProductsUseCase>(TYPES.SearchProductsUseCase).to(SearchProd
 // Brands bindings
 container.bind<BrandsRepository>(TYPES.BrandsRepository).to(SqliteBrandsRepository);
 container.bind<SearchBrandUseCase>(TYPES.SearchBrandsUseCase).to(SearchBrandUseCase);
+container.bind<FindBrandByIdUseCase>(TYPES.FindBrandByIdUseCase).to(FindBrandByIdUseCase);
+container.bind<SearchProductService>(TYPES.SearchProductsService).to(AlgoliaProductSearchService);
 export default container;

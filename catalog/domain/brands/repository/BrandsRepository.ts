@@ -7,4 +7,5 @@ export interface SearchBrandsCriteria {
 }
 export interface BrandsRepository {
     search(criteria: SearchBrandsCriteria): Promise<{ brands: Brand[]; total: number; pages: number ; limit: number }>;
+    findById(id: string): Promise<Brand | null>;
 }

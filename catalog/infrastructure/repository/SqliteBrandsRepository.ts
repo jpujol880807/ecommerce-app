@@ -4,7 +4,7 @@ import {DatabaseFactory} from '~~/common/infrastructure/db/drizzle/DatabaseFacto
 import {injectable, inject} from 'inversify';
 import {Brand} from '../../domain/brands/entity/Brand';
 import {brands} from '~~/common/infrastructure/db/drizzle/schema';
-import {count, like} from 'drizzle-orm';
+import {count, eq, like} from 'drizzle-orm';
 import type {BrandsRepository, SearchBrandsCriteria} from '~~/catalog/domain/brands/repository/BrandsRepository';
 
 @injectable()
@@ -38,5 +38,19 @@ export class SqliteBrandsRepository implements BrandsRepository {
             pages: pages,
             limit: criteria.limit,
         };
+    }
+
+    async findById(id: string): Promise<Brand | null> {
+        const result = await this.db
+            .select()
+            .from(brands)
+            .where(eq(brands.id, id))
+            .limit(1);
+
+        if (result.length === 0) {
+            return null;
+        }
+
+        return new Brand(result[0]!!);
     }
 }
