@@ -1,3 +1,6 @@
+import {GetImmediateChildrenUseCase} from '~~/catalog/application/categories/use-cases/GetImmediateChildrenUseCase';
+import {GetCategoryUseCase} from '~~/catalog/application/categories/use-cases/GetCategoryUseCase';
+
 export const TYPES = {
     UsersRepository: Symbol.for('UsersRepository'),
     CreateUserUseCase: Symbol.for('CreateUserUseCase'),
@@ -17,4 +20,8 @@ export const TYPES = {
     FindBrandByIdUseCase: Symbol.for('FindBrandByIdUseCase'),
     SearchClientFactory: Symbol.for('SearchClientFactory'),
     SearchProductsService: Symbol.for('SearchProductsService'),
+    GetPathFromRootUseCase: Symbol.for('GetPathFromRootUseCase'),
+    GetImmediateChildrenUseCase: Symbol.for('GetImmediateChildrenUseCase'),
+    GetCategoryUseCase: Symbol.for('GetCategoryUseCase'),
+    GetByCategoryIdUseCase: Symbol.for('GetByCategoryIdUseCase')
 };

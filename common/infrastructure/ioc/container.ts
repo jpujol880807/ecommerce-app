@@ -20,6 +20,10 @@ import {SearchBrandUseCase} from '~~/catalog/application/brands/use-cases/Search
 import {FindBrandByIdUseCase} from '~~/catalog/application/brands/use-cases/FindBrandByIdUseCase';
 import type {SearchProductService} from '~~/catalog/domain/products/services/SearchProductService';
 import {AlgoliaProductSearchService} from '~~/catalog/infrastructure/services/AlgoliaProductSearchService';
+import {GetPathFromRootUseCase} from '~~/catalog/application/categories/use-cases/GetPathFromRootUseCase';
+import {GetImmediateChildrenUseCase} from '~~/catalog/application/categories/use-cases/GetImmediateChildrenUseCase';
+import {GetCategoryUseCase} from '~~/catalog/application/categories/use-cases/GetCategoryUseCase';
+import {GetByCategoryIdUseCase} from '~~/catalog/application/products/use-cases/GetByCategoryIdUseCase';
 
 const container = new Container({defaultScope: 'Singleton'});
 
@@ -39,12 +43,16 @@ container.bind<LoginUserUseCase>(TYPES.LoginUserUseCase).to(LoginUserUseCase);
 container.bind<CategoriesRepository>(TYPES.CategoryRepository).to(SqliteCategoriesRepository);
 container.bind<GetRootCategoriesUseCase>(TYPES.GetRootCategoriesUseCase).to(GetRootCategoriesUseCase);
 container.bind<GetCategorySubtreeUseCase>(TYPES.GetCategoryTreeUseCase).to(GetCategorySubtreeUseCase);
+container.bind<GetPathFromRootUseCase>(TYPES.GetPathFromRootUseCase).to(GetPathFromRootUseCase);
+container.bind<GetImmediateChildrenUseCase>(TYPES.GetImmediateChildrenUseCase).to(GetImmediateChildrenUseCase);
+container.bind<GetCategoryUseCase>(TYPES.GetCategoryUseCase).to(GetCategoryUseCase);
 // 2.2 Product bindings
 container.bind<ProductsRepository>(TYPES.ProductsRepository).to(SqliteProductsRepository);
 container.bind<GetDealsOfTheDayUseCase>(TYPES.GetDealsOfTheDayUseCase).to(GetDealsOfTheDayUseCase);
 container.bind<GetFeaturedProductsUseCase>(TYPES.GetFeaturedProductsUseCase).to(GetFeaturedProductsUseCase);
 container.bind<GetPopularProductsUseCase>(TYPES.GetPopularProductsUseCase).to(GetPopularProductsUseCase);
 container.bind<SearchProductsUseCase>(TYPES.SearchProductsUseCase).to(SearchProductsUseCase);
+container.bind<GetByCategoryIdUseCase>(TYPES.GetByCategoryIdUseCase).to(GetByCategoryIdUseCase);
 // Brands bindings
 container.bind<BrandsRepository>(TYPES.BrandsRepository).to(SqliteBrandsRepository);
 container.bind<SearchBrandUseCase>(TYPES.SearchBrandsUseCase).to(SearchBrandUseCase);

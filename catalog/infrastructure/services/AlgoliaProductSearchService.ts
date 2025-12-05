@@ -29,7 +29,7 @@ interface AlgoliaSearchResult {
 
 
 @injectable()
-export class AlgoliaProductSearchService implements SearchProductService{
+export class AlgoliaProductSearchService implements SearchProductService {
     private indexName = 'ecommerce_app_products';
     private client: SearchClient;
 
@@ -44,7 +44,7 @@ export class AlgoliaProductSearchService implements SearchProductService{
             page: criteria.page ? Math.floor(criteria.page / (criteria.limit || 10)) : 0,
         };
 
-        const filters = [];
+        const filters = ['price_cents > 0'];
         if (criteria.brandId) filters.push(`brand_id:${criteria.brandId}`);
         if (criteria.minPrice) filters.push(`price_cents >= ${criteria.minPrice * 100}`);
         if (criteria.maxPrice) filters.push(`price_cents <= ${criteria.maxPrice * 100}`);

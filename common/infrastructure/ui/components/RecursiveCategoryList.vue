@@ -23,7 +23,7 @@
     :title="node.category.name"
     :value="node.category.id"
     rounded="xl"
-    :to="`/category/${node.category.slug}`"
+    :to="`/categories/${node.category.slug}`"
     link
     density="compact"
   ></v-list-item>

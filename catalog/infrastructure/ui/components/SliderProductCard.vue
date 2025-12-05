@@ -1,5 +1,5 @@
 <template>
-  <v-card :class="[customClass, 'mx-auto my-12 pb-4']" width="324" >
+  <v-card :class="[customClass, 'mx-auto my-12 pb-4 rounded-lg']" width="324" >
     <v-badge
         v-if="hydratedProduct.discountPercentage > 0"
         color="red"
@@ -7,12 +7,19 @@
         class="badge"
     >
     </v-badge>
-    <v-img v-if="hydratedProduct.primaryImageUrl" :src="hydratedProduct.primaryImageUrl || ''" height="200" class="ma-4"></v-img>
+    <v-img
+        v-if="hydratedProduct.primaryImageUrl"
+        :src="hydratedProduct.primaryImageUrl || ''"
+        height="200"
+        class="ma-4 text-right"
+    >
+      <v-btn :icon="'mdi-heart-outline'"></v-btn>
+    </v-img>
     <div v-else class="d-flex align-center justify-center ma-4" style="height: 200px;">
       <v-icon size="200">mdi mdi-image-off-outline</v-icon>
     </div>
     <v-card-item class="mt-n4">
-      <v-card-text class="text-end"><b>{{ hydratedProduct.brand?.name }}</b></v-card-text>
+      <v-card-text class="text-end"><b class="product-description">{{ hydratedProduct.brand?.name ? hydratedProduct.brand.name : 'Unknown Brand'}}</b></v-card-text>
       <v-card-title class="text-center">{{ hydratedProduct.title }}</v-card-title>
       <v-card-text class="ma-4 text-center">
         <div class="text-center product-description">
@@ -33,7 +40,7 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="green" block :disabled="!hydratedProduct.isInStock">
+        <v-btn color="green" block :disabled="hydratedProduct.priceCents <= 0">
           <v-icon left>mdi-cart</v-icon>
           Add To Cart
         </v-btn>

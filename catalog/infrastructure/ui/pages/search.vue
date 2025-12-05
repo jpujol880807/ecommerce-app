@@ -51,7 +51,9 @@
         </template>
         <v-card>
           <v-toolbar>
-            <v-toolbar-title>Filters <v-icon>mdi-tune</v-icon></v-toolbar-title>
+            <v-toolbar-title>Filters
+              <v-icon>mdi-tune</v-icon>
+            </v-toolbar-title>
             <v-toolbar-items>
               <v-btn
                   text="Close"
@@ -67,55 +69,62 @@
       </v-dialog>
     </v-system-bar>
     <v-row>
-      <v-col cols="12" md="12" lg="4" xl="2" class="hidden-md-and-down">
-        <SearchFilters @change="onFiltersChanged"/>
-      </v-col>
-      <v-col cols="12" md="12" lg="8" xl="10">
-        <v-row>
-          <v-row justify="center" v-if="loading">
-            <v-col
-                v-for="n in skeletonCount"
-                :key="n"
-                cols="auto"
-            >
-              <v-card class="mx-auto my-12 pb-4" width="324">
-                <v-skeleton-loader class="mb-2" type="image" height="200"/>
-                <v-skeleton-loader class="mb-1 mx-auto" type="text"/>
-                <v-skeleton-loader class="mx-auto" type="sentences"/>
-                <v-skeleton-loader class="mx-4" type="actions"/>
-              </v-card>
+      <v-col cols="12">
+        <v-sheet class="pa-4" elevation="1">
+          <v-row>
+            <v-col cols="12" md="12" lg="4" xl="2" class="hidden-md-and-down">
+              <SearchFilters @change="onFiltersChanged"/>
+            </v-col>
+            <v-col cols="12" md="12" lg="8" xl="10">
+              <v-row>
+                <v-row justify="center" v-if="loading">
+                  <v-col
+                      v-for="n in skeletonCount"
+                      :key="n"
+                      cols="auto"
+                  >
+                    <v-card class="mx-auto my-12 pb-4" width="324">
+                      <v-skeleton-loader class="mb-2" type="image" height="200"/>
+                      <v-skeleton-loader class="mb-1 mx-auto" type="text"/>
+                      <v-skeleton-loader class="mx-auto" type="sentences"/>
+                      <v-skeleton-loader class="mx-4" type="actions"/>
+                    </v-card>
+                  </v-col>
+                </v-row>
+
+                <v-row v-else justify="center">
+                  <v-col cols="12" v-if="error">
+                    <v-alert type="error" variant="tonal" class="mb-4">
+                      {{ error }}
+                    </v-alert>
+                  </v-col>
+                  <v-col cols="12" v-else-if="!products.length">
+                    <v-alert type="info" variant="tonal" class="mt-4">
+                      No results found.
+                    </v-alert>
+                  </v-col>
+                  <v-col
+                      v-for="p in products"
+                      :key="p.id"
+                      cols="auto"
+                  >
+                    <SliderProductCard :product="p"/>
+                  </v-col>
+                </v-row>
+
+              </v-row>
+              <div class="text-center mt-4">
+                <v-pagination
+                    v-model="searchStore.page"
+                    :length="totalPages"
+                    rounded="0"
+                />
+              </div>
             </v-col>
           </v-row>
-
-          <v-row v-else justify="center">
-            <v-col cols="12" v-if="error">
-              <v-alert type="error" variant="tonal" class="mb-4">
-                {{ error }}
-              </v-alert>
-            </v-col>
-            <v-col cols="12" v-else-if="!products.length">
-              <v-alert type="info" variant="tonal" class="mt-4">
-                No results found.
-              </v-alert>
-            </v-col>
-            <v-col
-                v-for="p in products"
-                :key="p.id"
-                cols="auto"
-            >
-              <SliderProductCard :product="p"/>
-            </v-col>
-          </v-row>
-
-        </v-row>
-        <div class="text-center mt-4">
-          <v-pagination
-              v-model="searchStore.page"
-              :length="totalPages"
-              rounded="0"
-          />
-        </div>
+        </v-sheet>
       </v-col>
+
     </v-row>
   </v-container>
 </template>
@@ -191,7 +200,7 @@ function syncUrlFromStore() {
   if (searchStore.page > 1) query.page = String(searchStore.page);
   if (searchStore.limit !== 20) query.limit = String(searchStore.limit);
 
-  router.push({ query });
+  router.push({query});
 }
 
 

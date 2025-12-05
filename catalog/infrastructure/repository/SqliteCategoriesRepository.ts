@@ -1,13 +1,14 @@
 import { injectable, inject } from 'inversify';
-import {eq, and, sql} from 'drizzle-orm';
+import {eq, and, sql, or} from 'drizzle-orm';
 import type { LibSQLDatabase } from 'drizzle-orm/libsql';
 import type {CategoriesRepository} from '../../domain/categories/repository/CategoriesRepository';
 import {DatabaseFactory} from '~~/common/infrastructure/db/drizzle/DatabaseFactory';
 import {Category, CategoryTree} from '../../domain/categories/entity/Category';
-import {categories, categoryClosure} from '~~/common/infrastructure/db/drizzle/schema';
+import {categories, categoryClosure, categoryImages} from '~~/common/infrastructure/db/drizzle/schema';
 import {TYPES} from '~~/common/infrastructure/ioc/types';
 import {inArray} from 'drizzle-orm/sql/expressions/conditions';
 import {CategoryNotFoundException} from '~~/catalog/domain/categories/exceptions/CategoryExceptions';
+import {CategoryImage} from '~~/catalog/domain/categories/entity/CategoryImage';
 
 @injectable()
 export class SqliteCategoriesRepository implements CategoriesRepository {
@@ -120,12 +121,53 @@ export class SqliteCategoriesRepository implements CategoriesRepository {
 
     async getById(id: string): Promise<Category | null> {
         const results = await this.db
-            .select()
+            .select({
+                id: categories.id,
+                name: categories.name,
+                slug: categories.slug,
+                meta: categories.meta,
+                createdAt: categories.created_at,
+                updatedAt: categories.updated_at,
+                imageId: categoryImages.id,
+                imageUrlSmall: categoryImages.url_small,
+                imageUrlMedium: categoryImages.url_medium,
+                imageUrlLarge: categoryImages.url_large,
+                imageUrlOriginal: categoryImages.url_original,
+                imageAlt: categoryImages.alt,
+                imagePosition: categoryImages.position,
+            })
             .from(categories)
-            .where(eq(categories.id, id))
+            .leftJoin(categoryImages, eq(categories.id, categoryImages.category_id))
+            .where(eq(categories.id, id));
 
-        return results.length ? new Category(this.fromDbRecord(results[0]!!)) : null;
+        if (!results.length) return null;
+
+        const categoryRow = results[0]!!;
+        const images = results
+            .filter(r => r.imageId)
+            .map(r => new CategoryImage(
+                r.imageId || '',
+                r.id,
+                r.imageUrlSmall,
+                r.imageUrlMedium,
+                r.imageUrlLarge,
+                r.imageUrlOriginal || '',
+                r.imageAlt,
+                r.imagePosition || 0,
+                r.createdAt
+            ));
+
+        return new Category({
+            id: categoryRow.id,
+            name: categoryRow.name,
+            slug: categoryRow.slug,
+            meta: categoryRow.meta ? JSON.parse(categoryRow.meta) : {},
+            images,
+            createdAt: categoryRow.createdAt,
+            updatedAt: categoryRow.updatedAt,
+        });
     }
+
 
     async getBySlug(slug: string): Promise<Category | null> {
         const results = await this.db
@@ -133,7 +175,7 @@ export class SqliteCategoriesRepository implements CategoriesRepository {
             .from(categories)
             .where(eq(categories.slug, slug));
 
-        return results.length ? new Category(this.fromDbRecord(results[0]!!)) : null;
+        return results.length ? this.getById(results[0]!!.id) : null;
     }
 
     async getByParentId(parentId: string | null): Promise<Category[]> {
@@ -358,4 +400,128 @@ export class SqliteCategoriesRepository implements CategoriesRepository {
         }
         return root;
     }
+
+    async getPathFromRoot(idOrSlug: string): Promise<Category[]> {
+        const category = await this.db
+            .select()
+            .from(categories)
+            .where(
+                or(eq(categories.id, idOrSlug), eq(categories.slug, idOrSlug))
+            )
+            .limit(1);
+
+        if (!category.length) {
+            throw new CategoryNotFoundException(idOrSlug);
+        }
+
+        const categoryId = category[0]!!.id;
+
+        const rows = await this.db
+            .select({
+                id: categories.id,
+                name: categories.name,
+                slug: categories.slug,
+                meta: categories.meta,
+                createdAt: categories.created_at,
+                updatedAt: categories.updated_at,
+                depth: categoryClosure.depth,
+            })
+            .from(categoryClosure)
+            .innerJoin(categories, eq(categoryClosure.ancestor, categories.id))
+            .where(eq(categoryClosure.descendant, categoryId));
+
+        if (!rows.length) {
+            throw new CategoryNotFoundException(categoryId);
+        }
+
+        // Ordenar de raíz -> hoja: depth más grande primero
+        rows.sort((a, b) => Number(b.depth ?? 0) - Number(a.depth ?? 0));
+
+        return rows.map(r => {
+            const meta = r.meta ? JSON.parse(r.meta as unknown as string) : {};
+            return new Category({
+                id: r.id,
+                name: r.name,
+                slug: r.slug,
+                meta,
+                createdAt: r.createdAt,
+                updatedAt: r.updatedAt,
+            });
+        });
+    }
+
+    async getImmediateChildren(categoryId: string): Promise<Category[]> {
+        const results = await this.db
+            .select({
+                id: categories.id,
+                name: categories.name,
+                slug: categories.slug,
+                meta: categories.meta,
+                createdAt: categories.created_at,
+                updatedAt: categories.updated_at,
+                imageId: categoryImages.id,
+                imageUrlSmall: categoryImages.url_small,
+                imageUrlMedium: categoryImages.url_medium,
+                imageUrlLarge: categoryImages.url_large,
+                imageUrlOriginal: categoryImages.url_original,
+                imageAlt: categoryImages.alt,
+                imagePosition: categoryImages.position,
+            })
+            .from(categoryClosure)
+            .innerJoin(categories, eq(categoryClosure.descendant, categories.id))
+            .leftJoin(categoryImages, eq(categories.id, categoryImages.category_id))
+            .where(
+                and(
+                    eq(categoryClosure.ancestor, categoryId),
+                    eq(categoryClosure.depth, 1)
+                )
+            );
+
+        // Agrupar resultados por categoría
+        const categoryMap = new Map<string, any>();
+
+        for (const row of results) {
+            if (!categoryMap.has(row.id)) {
+                categoryMap.set(row.id, {
+                    id: row.id,
+                    name: row.name,
+                    slug: row.slug,
+                    meta: row.meta ? JSON.parse(row.meta) : {},
+                    createdAt: row.createdAt,
+                    updatedAt: row.updatedAt,
+                    images: []
+                });
+            }
+
+            if (row.imageId) {
+                categoryMap.get(row.id).images.push(
+                    new CategoryImage(
+                        row.imageId,
+                        row.id,
+                        row.imageUrlSmall,
+                        row.imageUrlMedium,
+                        row.imageUrlLarge,
+                        row.imageUrlOriginal || '',
+                        row.imageAlt,
+                        row.imagePosition || 0,
+                        row.createdAt
+                    )
+                );
+            }
+        }
+
+        return Array.from(categoryMap.values()).map(cat =>
+            new Category({
+                id: cat.id,
+                name: cat.name,
+                slug: cat.slug,
+                meta: cat.meta,
+                images: cat.images,
+                createdAt: cat.createdAt,
+                updatedAt: cat.updatedAt,
+            })
+        );
+    }
+
+
 }

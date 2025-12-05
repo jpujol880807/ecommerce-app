@@ -55,5 +55,8 @@ export default defineNuxtConfig({
     },
     vuetifyOptions: {
         blueprint: md3
+    },
+    vuetify: {
+        vuetifyOptions: './vuetify.config.ts'
     }
 });

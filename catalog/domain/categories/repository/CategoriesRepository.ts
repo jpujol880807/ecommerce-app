@@ -29,4 +29,8 @@ export interface CategoriesRepository {
     getAll(): Promise<Category[]>;
 
     getSubTree(categoryId: string): Promise<CategoryTree>;
+
+    getPathFromRoot(idOrSlug: string): Promise<Category[]>;
+
+    getImmediateChildren(categoryId: string): Promise<Category[]>;
 }

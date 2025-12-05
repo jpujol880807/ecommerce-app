@@ -34,4 +34,19 @@ export class ProductImage {
     hasAllSizes(): boolean {
         return !!(this.urlSmall && this.urlMedium && this.urlLarge);
     }
+
+    static fromJSON(data: any): ProductImage {
+        return new ProductImage(
+            data.id,
+            data.productId,
+            data.productVariantId || null,
+            data.urlSmall || null,
+            data.urlMedium || null,
+            data.urlLarge || null,
+            data.urlOriginal,
+            data.alt || null,
+            data.position || 0,
+            data.createdAt ? new Date(data.createdAt) : new Date()
+        );
+    }
 }

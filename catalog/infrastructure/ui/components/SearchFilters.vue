@@ -119,7 +119,7 @@
         No brands found.
       </div>
 
-      <v-radio-group v-model="search.brandId" density="compact">
+      <v-radio-group v-model="search.brandId">
         <v-radio
             v-for="brand in availableBrands"
             :key="brand.id"

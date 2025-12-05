@@ -1,27 +1,30 @@
 <template>
-  <v-app-bar scroll-behavior="elevate fade-image inverted" extended extension-height="10">
-    <template v-slot:prepend>
-      <v-app-bar-nav-icon class="mt-4" @click="drawerStore.toggle()"></v-app-bar-nav-icon>
-    </template>
-    <v-app-bar-title class="text-no-wrap mt-4 hidden-sm-and-down cursor-pointer" @click="navigateTo('/')" >Testing E-COMMERCE</v-app-bar-title>
+  <v-app-bar
+      scroll-behavior="elevate fade-image inverted"
+      flat extension-height="75"
+      elevation="1"
+      color="primary"
+  >
+    <v-app-bar-title
+        class="text-no-wrap ml-6 mt-4 cursor-pointer ml-0"
+        @click="navigateTo('/')"
+        style="min-width: 140px;"
+    ><v-icon size="large">mdi-store-check-outline</v-icon> Testing E-COMMERCE</v-app-bar-title>
     <v-spacer></v-spacer>
-    <v-text-field
-        density="compact"
-        variant="solo"
-        label="Search Products"
-        append-inner-icon="mdi-magnify"
-        single-line
-        rounded hide-details min-width="250px"
-        class="mt-4"
-        @click:append-inner="search"
-        v-model="searchQuery"
-        @keydown.enter="search"
-    ></v-text-field>
-    <v-spacer></v-spacer>
+    <v-btn class="text-none mt-4 ml-2" icon>
+      <v-badge location="top right" content="99+">
+        <v-icon icon="mdi-cart"></v-icon>
+      </v-badge>
+    </v-btn>
+    <v-btn class="text-none mt-4 ml-2" icon>
+      <v-badge location="top right" color="success" content="99+">
+        <v-icon icon="mdi-heart-outline"></v-icon>
+      </v-badge>
+    </v-btn>
     <v-btn class="hidden-sm-and-down" to="/login" v-if="!loggedIn">Sign In / Login</v-btn>
     <v-menu v-else :close-on-content-click="false">
       <template v-slot:activator="{ props }">
-        <v-btn icon class="ml-2 mt-4">
+        <v-btn class="text-none mt-4 ml-2" icon>
           <v-icon size="large" v-bind="props">mdi-account-circle</v-icon>
         </v-btn>
       </template>
@@ -51,6 +54,24 @@
         </v-list-item>
       </v-list>
     </v-menu>
+    <template v-slot:extension>
+      <v-app-bar-nav-icon class="ml-md-2" @click="drawerStore.toggle()"></v-app-bar-nav-icon>
+      <v-spacer></v-spacer>
+      <v-text-field
+          density="compact"
+          variant="solo"
+          label="Search Products"
+          append-inner-icon="mdi-magnify"
+          single-line
+          hide-details min-width="300px"
+          rounded
+          clearable
+          @click:append-inner="search"
+          v-model="searchQuery"
+          @keydown.enter="search"
+      ></v-text-field>
+      <v-spacer></v-spacer>
+    </template>
   </v-app-bar>
 </template>
 

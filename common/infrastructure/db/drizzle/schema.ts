@@ -207,3 +207,21 @@ export const variantOptionValues = sqliteTable('variant_option_values', (t) => (
 }), (table) => [
     primaryKey({columns: [table.variant_id, table.option_id]}),
 ]);
+
+/* CATEGORY IMAGES */
+export const categoryImages = sqliteTable('category_images', (t) => ({
+    id: t.text('id').primaryKey().default(uuidV4),
+    category_id: t.text('category_id').notNull().references(() => categories.id, {onDelete: 'cascade'}),
+
+    // URLs por tamaño
+    url_small: t.text('url_small'),
+    url_medium: t.text('url_medium'),
+    url_large: t.text('url_large'),
+    url_original: t.text('url_original').notNull().default(''),
+
+    alt: t.text('alt'),
+    position: t.integer('position').default(0),
+
+    created_at: t.integer('created_at', {mode: 'timestamp_ms'})
+        .$defaultFn(() => new Date()).notNull(),
+}));

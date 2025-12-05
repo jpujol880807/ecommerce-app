@@ -1,6 +1,6 @@
 <template>
-  <v-footer>
-    <v-card flat tile class="white--text py-12 px-5" width="100%" color="#F4F5F9">
+  <v-footer class="pa-0">
+    <v-card flat tile class="white--text py-12 px-5" width="100%" :color="color">
       <v-row>
         <v-col cols="12" xs="12" sm="6" md="4" class="pa-16">
           <div class="text-center">
@@ -51,4 +51,9 @@
   </v-footer>
 </template>
 <script setup lang="ts">
+import {useThemeStore} from '~~/common/infrastructure/ui/stores/theme';
+import {computed} from 'vue';
+
+const themeStore = useThemeStore();
+const color = computed(() => themeStore.darkMode ? '#121212' : '#E0E0E0')
 </script>

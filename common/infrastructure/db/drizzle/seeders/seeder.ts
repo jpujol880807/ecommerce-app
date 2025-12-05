@@ -2,13 +2,13 @@ import 'reflect-metadata';
 
 import {categoriesSeeder} from './seed-categories';
 import {productsSeeder} from './seed-products';
+import {categoryImagesSeeder} from './seed-category-images';
 
 async function runSeeders() {
     console.log('Starting database seeders...');
-    await categoriesSeeder();
-    console.log('Database seeding completed.');
-    console.log('Starting database seeders...');
-    await productsSeeder();
+    // await categoriesSeeder();
+    // await productsSeeder();
+    await categoryImagesSeeder();
     console.log('Database seeding completed.');
 }
 

@@ -4,8 +4,10 @@ import {useTheme} from 'vuetify';
 
 export const useThemeStore = defineStore('theme', () => {
     const theme = useTheme();
-    const darkMode = ref(theme.global.current.value.dark);
-
+    const cookie = useCookie('theme');
+    const initialTheme = cookie.value?.darkMode ? 'dark' : 'light';
+    const darkMode =  initialTheme === 'dark' ? ref(theme.global.current.value.dark) : ref(theme.global.current.value.ligth);
+    theme.change(initialTheme);
     watch(darkMode, (newValue) => {
         theme.change(newValue ? 'dark' : 'light');
     });
@@ -14,5 +16,7 @@ export const useThemeStore = defineStore('theme', () => {
         darkMode
     };
 }, {
-    persist: true
+    persist: {
+        storage: piniaPluginPersistedstate.cookies(),
+    }
 });

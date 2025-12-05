@@ -136,7 +136,7 @@ export class Product {
             data.updatedAt ? new Date(data.updatedAt) : new Date()
         );
 
-        product.images = data.images || [];
+        product.images = data.images.map((i: any) => ProductImage.fromJSON(i)) || [];
         product.variations = data.variations || [];
         product.categories = data.categories || [];
 

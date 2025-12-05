@@ -1,3 +1,5 @@
+import type {CategoryImage} from '~~/catalog/domain/categories/entity/CategoryImage';
+
 export class Category {
     readonly id?: string;
     public readonly name: string;
@@ -5,12 +7,14 @@ export class Category {
     public readonly slug: string;
     public readonly createdAt: Date;
     public readonly updatedAt: Date;
+    public readonly images?: CategoryImage[];
     constructor(props: {
         id?: string;
         name: string;
         slug?: string;
         description?: string;
         meta?: Record<string, any>;
+        images?: CategoryImage[];
         createdAt?: Date;
         updatedAt?: Date;
     }) {
@@ -18,6 +22,7 @@ export class Category {
         this.name = props.name;
         this.slug = props.slug ? props.slug : Category.generateSlug(props.name);
         this.meta = props.meta;
+        this.images = props.images;
         this.createdAt = props.createdAt ?? new Date();
         this.updatedAt = props.updatedAt ?? new Date();
     }
