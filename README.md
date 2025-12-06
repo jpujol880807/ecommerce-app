@@ -22,6 +22,8 @@ yarn install
 bun install
 ```
 
+create a `.env` file in the root directory based on the provided `.env.example` file and configure your environment variables accordingly.
+
 ## Database Setup
 
 ### Generate Migrations
@@ -230,5 +232,9 @@ Track your progress on this e-commerce app. Mark items as complete by replacing 
 
 **Estimated Timeline**: ~12-16 weeks for MVP + advanced features
 
-**Current Status**: Phase 1 - Foundation & Authentication
+**Current Status**: 
+
+- Phase 1 - Foundation & Authentication (20% complete) 
+- Phase 2 - Product Catalog (80% complete)
+- Phase 3 - Category Management (100% complete)
 
