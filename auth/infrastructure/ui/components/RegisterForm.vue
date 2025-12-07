@@ -1,7 +1,7 @@
 <template>
   <v-form ref="register-form" @submit.prevent="register">
     <v-row align="center" justify="center" class="mt-12">
-      <v-col cols="12" md="8">
+      <v-col cols="12">
         <v-row class="mt-md-8 ga-0">
           <v-col cols="12" md="6" class="py-0">
             <v-text-field label="First Name" outlined density="compact" color="primary" autocomplete="false"

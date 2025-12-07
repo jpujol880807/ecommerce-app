@@ -14,12 +14,14 @@
             </v-breadcrumbs-item>
           </template>
         </v-breadcrumbs>
+
         <v-skeleton-loader v-if="loadingCategory" type="heading"></v-skeleton-loader>
         <h1 v-else-if="category">{{ category.name }}</h1>
       </v-col>
+
       <v-col cols="12">
         <v-skeleton-loader v-if="loadingCategory" type="image" height="400px"></v-skeleton-loader>
-        <v-carousel v-else-if="category && category.images.length" hide-delimiters>
+        <v-carousel v-else-if="category && category.images?.length" hide-delimiters>
           <v-carousel-item
               v-for="(image, i) in category.images"
               :key="i"
@@ -30,8 +32,10 @@
         </v-carousel>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="12">
+        <h2 class="section-title" v-if="!loadingSubcategories && subcategories.length">Child Categories</h2>
         <v-slide-group center-active active-class="border-primary" min-width="100%">
           <template v-if="loadingSubcategories">
             <v-slide-group-item
@@ -41,7 +45,7 @@
             >
               <v-card class="mx-auto my-12 pb-4" width="324">
                 <div class="d-flex align-center justify-center ma-4" style="height: 200px;">
-                  <v-skeleton-loader class="mb-2 rounded-circle" type="image" height="200"/>
+                  <v-skeleton-loader type="image" width="100%" height="100%"/>
                 </div>
                 <v-skeleton-loader class="mb-1 mx-auto" type="text"/>
               </v-card>
@@ -53,15 +57,10 @@
                 v-for="subcategory in subcategories"
                 :key="subcategory.id"
             >
-              <v-card :href="`/categories/${subcategory.slug}`" class="mx-auto mr-4 my-4 bg-transparent" width="324" :border="false"
-                      elevation="0">
+              <v-card :href="`/categories/${subcategory.slug}`" class="mx-auto mr-4 my-4 bg-transparent" width="324" :border="false" elevation="0">
                 <div class="d-flex align-center justify-center ma-4" style="height: 200px;">
-                  <v-avatar
-                      size="200px"
-                  >
-                    <v-img v-if="subcategory.images.length" :src="subcategory.images[0]?.urlMedium || '/image/no-image-medium.png'" height="200px"></v-img>
-                    <v-img v-else src="/image/no-image-medium.png" height="200px"></v-img>
-                  </v-avatar>
+                  <v-img v-if="subcategory.images.length" :src="subcategory.images[0]?.urlMedium || '/image/no-image-medium.png'" contain height="100%"></v-img>
+                  <v-img v-else src="/image/no-image-medium.png" contain height="100%"></v-img>
                 </div>
                 <v-card-title class="text-center">{{ subcategory.name }}</v-card-title>
               </v-card>
@@ -70,7 +69,12 @@
         </v-slide-group>
       </v-col>
     </v-row>
-    <v-row justify="center">
+
+    <v-row justify="center" class="mt-6">
+      <v-col cols="12">
+        <h2 class="section-title" v-if="!loadingProducts">Products in this category</h2>
+      </v-col>
+
       <v-row justify="center" v-if="loadingProducts">
         <v-col
             v-for="n in skeletonCount"
@@ -85,11 +89,13 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-col cols="12" v-if="!products.length">
+
+      <v-col cols="12" v-if="!products.length && !loadingProducts">
         <v-alert type="info" variant="tonal" class="mt-4">
           No results found.
         </v-alert>
       </v-col>
+
       <v-col
           v-for="p in products"
           :key="p.id"
@@ -202,4 +208,10 @@ const subcategories = computed<Category[]>(() => {
 </script>
 
 <style scoped>
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 16px 0;
+  color: var(--v-theme-on-surface, #0F1724);
+}
 </style>

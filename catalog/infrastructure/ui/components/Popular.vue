@@ -30,7 +30,7 @@
             :key="popular.id"
             class="ma-4"
         >
-          <SliderProductCard :product="popular" custom-class="mr-4"/>
+          <SliderProductCard :product="popular" custom-class="mr-6"/>
         </v-slide-group-item>
       </template>
     </v-slide-group>

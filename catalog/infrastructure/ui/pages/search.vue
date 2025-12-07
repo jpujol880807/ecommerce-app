@@ -1,14 +1,16 @@
 <template>
-  <v-container>
-    <v-system-bar window>
-      <span class="hidden-sm-and-down">
+  <v-container class="search-page pa-0">
+    <v-system-bar class="system-bar" window>
+      <div class="system-left hidden-sm-and-down">
         {{ resultRangeStart }}-{{ resultRangeEnd }} of over {{ searchStore.total.toLocaleString() }} results for
-        <strong>"{{ searchStore.query }}"</strong>
-      </span>
-      <span class="hidden-md-and-up">
+        <strong class="query-text">"{{ searchStore.query }}"</strong>
+      </div>
+      <div class="system-left hidden-md-and-up">
         {{ resultRangeStart }}-{{ resultRangeEnd }} of {{ searchStore.total.toLocaleString() }} results
-      </span>
-      <v-spacer></v-spacer>
+      </div>
+
+      <v-spacer />
+
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn
@@ -16,9 +18,8 @@
               density="compact"
               rounded
               variant="text"
-              class="text-none"
+              class="text-none sort-btn"
               size="small"
-              style="font-size: 0.75rem;"
           >
             Sort By: {{ sortItems.find(item => item.value === searchStore.sortBy)?.title || '' }}
             <v-icon right>mdi-menu-down</v-icon>
@@ -26,108 +27,84 @@
         </template>
         <v-list density="compact">
           <v-list-item
-              v-for="(item, index) in sortItems"
+              v-for="(item) in sortItems"
               :key="item.value"
-              :value="item.value"
               @click="onSortByChanged(item.value)"
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-dialog
-          v-model="dialog"
-          transition="dialog-bottom-transition"
-          fullscreen
-      >
+
+      <v-dialog v-model="dialog" transition="dialog-bottom-transition" fullscreen>
         <template v-slot:activator="{ props: activatorProps }">
-          <v-btn
-              icon="mdi-tune"
-              v-bind="activatorProps"
-              variant="text"
-              class="hidden-lg-and-up"
-          >
+          <v-btn icon="mdi-tune" v-bind="activatorProps" variant="text" class="hidden-lg-and-up">
           </v-btn>
         </template>
         <v-card>
-          <v-toolbar>
-            <v-toolbar-title>Filters
-              <v-icon>mdi-tune</v-icon>
-            </v-toolbar-title>
-            <v-toolbar-items>
-              <v-btn
-                  text="Close"
-                  variant="text"
-                  @click="dialog = false"
-              ></v-btn>
-            </v-toolbar-items>
+          <v-toolbar dense flat class="dialog-toolbar">
+            <v-toolbar-title>Filters <v-icon class="ml-2">mdi-tune</v-icon></v-toolbar-title>
+            <v-spacer />
+            <v-btn text variant="text" @click="dialog = false">Close</v-btn>
           </v-toolbar>
           <v-card-text>
-            <SearchFilters @change="onFiltersChanged"/>
+            <SearchFilters @change="onFiltersChanged" />
           </v-card-text>
         </v-card>
       </v-dialog>
     </v-system-bar>
-    <v-row>
+
+    <v-row class="page-content">
       <v-col cols="12">
-        <v-sheet class="pa-4" elevation="1">
+        <v-sheet class="pa-4 search-sheet" elevation="1">
           <v-row>
-            <v-col cols="12" md="12" lg="4" xl="2" class="hidden-md-and-down">
-              <SearchFilters @change="onFiltersChanged"/>
+            <v-col cols="12" md="12" lg="4" xl="2" class="hidden-md-and-down sidebar-col">
+              <SearchFilters @change="onFiltersChanged" />
             </v-col>
-            <v-col cols="12" md="12" lg="8" xl="10">
+
+            <v-col cols="12" md="12" lg="8" xl="10" class="results-col">
               <v-row>
-                <v-row justify="center" v-if="loading">
-                  <v-col
-                      v-for="n in skeletonCount"
-                      :key="n"
-                      cols="auto"
-                  >
-                    <v-card class="mx-auto my-12 pb-4" width="324">
-                      <v-skeleton-loader class="mb-2" type="image" height="200"/>
-                      <v-skeleton-loader class="mb-1 mx-auto" type="text"/>
-                      <v-skeleton-loader class="mx-auto" type="sentences"/>
-                      <v-skeleton-loader class="mx-4" type="actions"/>
+                <v-row justify="center" v-if="loading" class="skeleton-row">
+                  <v-col v-for="n in skeletonCount" :key="n" cols="auto">
+                    <v-card class="skeleton-card mx-auto my-12 pb-4" width="324" elevation="2">
+                      <v-skeleton-loader class="mb-2" type="image" height="200" />
+                      <v-skeleton-loader class="mb-1 mx-auto" type="text" />
+                      <v-skeleton-loader class="mx-auto" type="sentences" />
+                      <v-skeleton-loader class="mx-4" type="actions" />
                     </v-card>
                   </v-col>
                 </v-row>
 
-                <v-row v-else justify="center">
+                <v-row v-else justify="center" class="products-grid">
                   <v-col cols="12" v-if="error">
                     <v-alert type="error" variant="tonal" class="mb-4">
                       {{ error }}
                     </v-alert>
                   </v-col>
+
                   <v-col cols="12" v-else-if="!products.length">
                     <v-alert type="info" variant="tonal" class="mt-4">
                       No results found.
                     </v-alert>
                   </v-col>
-                  <v-col
-                      v-for="p in products"
-                      :key="p.id"
-                      cols="auto"
-                  >
-                    <SliderProductCard :product="p"/>
+
+                  <v-col v-for="p in products" :key="p.id" cols="auto" class="product-col">
+                    <SliderProductCard :product="p" />
                   </v-col>
                 </v-row>
-
               </v-row>
+
               <div class="text-center mt-4">
-                <v-pagination
-                    v-model="searchStore.page"
-                    :length="totalPages"
-                    rounded="0"
-                />
+                <v-pagination v-model="searchStore.page" :length="totalPages" rounded="0" class="styled-pagination" />
               </div>
             </v-col>
           </v-row>
         </v-sheet>
       </v-col>
-
     </v-row>
   </v-container>
 </template>
+
 <script setup lang="ts">
 import {computed, onMounted, ref, watch} from 'vue';
 import {useSearchStore} from '../stores/search';
@@ -135,7 +112,7 @@ import SearchFilters from '../components/SearchFilters.vue';
 import SliderProductCard from '../components/SliderProductCard.vue';
 import {useRoute, useRouter} from 'vue-router';
 
-definePageMeta({middleware: ['auth']});
+definePageMeta({ middleware: ['auth'] });
 
 const route = useRoute();
 const router = useRouter();
@@ -193,16 +170,13 @@ function syncUrlFromStore() {
   if (searchStore.minRating) query.minRating = String(searchStore.minRating);
   if (searchStore.minPrice) query.minPrice = String(searchStore.minPrice);
   if (searchStore.maxPrice) query.maxPrice = String(searchStore.maxPrice);
-  if (searchStore.hasDiscount === true) {
-    query.hasDiscount = 'true';
-  }
+  if (searchStore.hasDiscount === true) query.hasDiscount = 'true';
   if (searchStore.sortBy) query.sortBy = searchStore.sortBy;
   if (searchStore.page > 1) query.page = String(searchStore.page);
   if (searchStore.limit !== 20) query.limit = String(searchStore.limit);
 
   router.push({query});
 }
-
 
 async function fetchProducts() {
   loading.value = true;
@@ -221,7 +195,8 @@ async function fetchProducts() {
       limit: searchStore.limit
     };
 
-    const res = await $fetch('/api/products/search', {method: 'POST', body});
+    // Use nuxtApp.$fetch to satisfy TypeScript and runtime
+    const res = await $fetch('/api/products/search', { method: 'POST', body });
     products.value = res.results || [];
     searchStore.total = res.total || 0;
     searchStore.page = res.page || searchStore.page;
@@ -233,13 +208,11 @@ async function fetchProducts() {
   }
 }
 
-// Observar cambios en la página
 watch(() => searchStore.page, () => {
   syncUrlFromStore();
   fetchProducts();
 }, { immediate: true });
 
-// Si `SearchFilters` emite cambios de filtros
 function onFiltersChanged(newFilters: any) {
   for (const key in newFilters) {
     if (key in searchStore && newFilters[key] !== undefined) {
@@ -270,9 +243,71 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.xs-select .v-input {
-  font-size: 0.7em;
-  min-width: 120px;
-  display: inline-block;
+/* General page */
+.search-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--v-theme-background, #FAFBFF) 0%, rgba(0,0,0,0.02) 100%);
+  padding-top: 8px;
+  padding-bottom: 24px;
+}
+
+/* System bar */
+.system-bar {
+  background: linear-gradient(90deg, rgba(var(--v-theme-primary-rgb, 108,99,255),0.08), transparent 70%);
+  color: var(--v-theme-on-surface, #0F1724);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.system-left { font-size: 0.9rem; }
+.query-text { color: var(--v-theme-primary, #6C63FF); }
+
+/* Sheet & layout */
+.search-sheet {
+  border-radius: 12px;
+  background-color: var(--v-theme-surface, #FFFFFF);
+  box-shadow: 0 10px 30px rgba(12,17,43,0.04);
+  overflow: visible;
+}
+
+/* Sidebar */
+.sidebar-col {
+  padding-right: 12px;
+}
+
+/* Products grid */
+.products-grid {
+  gap: 12px;
+}
+.product-col {
+  transition: transform 240ms ease, box-shadow 240ms ease;
+}
+.product-col:hover { transform: translateY(-6px); }
+
+/* Skeletons */
+.skeleton-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Pagination */
+.styled-pagination .v-pagination__item {
+  transition: transform 180ms;
+}
+.styled-pagination .v-pagination__item:hover { transform: translateY(-4px); }
+
+/* Dialog toolbar */
+.dialog-toolbar {
+  background: var(--v-theme-surface, transparent);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .system-bar { font-size: 0.85rem; padding: 6px 10px; }
+  .search-sheet { padding: 12px; }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <v-form @submit.prevent="login" ref="loginForm">
     <v-row align="center" justify="center" class="mt-8">
-      <v-col cols="12" md="8">
+      <v-col cols="12">
         <v-text-field
             label="Email"
             outlined
@@ -24,11 +24,11 @@
             v-model="loginCredentials.password"
             :rules="passwordRules"
         ></v-text-field>
-        <v-row class="mt-4">
-          <v-col cols="6">
+        <v-row class="mt-md-4">
+          <v-col cols="12" sm="12" md="12" lg="6">
             <v-checkbox label="Remember Me" class="mt-n1" color="primary" density="compact" v-model="loginCredentials.remember"></v-checkbox>
           </v-col>
-          <v-col cols="6" class="pt-4">
+          <v-col cols="12" sm="12" md="12" lg="6" class="pt-md-4">
             <span class="caption text-primary" style="font-size: 17px;">Forgot Password</span>
           </v-col>
         </v-row>
@@ -58,7 +58,6 @@
           </v-btn>
         </div>
       </v-col>
-
     </v-row>
   </v-form>
 </template>

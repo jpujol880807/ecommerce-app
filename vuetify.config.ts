@@ -6,34 +6,36 @@ export default defineVuetifyConfiguration({
         themes: {
             light: {
                 colors: {
-                    primary: '#6200EE',
-                    primaryVariant: '#3700B3',
-                    secondary: '#03DAC6',
-                    secondaryVariant: '#018786',
-                    surface: '#F5F5F7',
-                    background: '#FDFDFD',
-                    error: '#B00020',
+                    primary: '#6C63FF',         // indigo-vibrant
+                    primaryVariant: '#5048C8',
+                    secondary: '#00D4FF',       // aqua
+                    secondaryVariant: '#00A7C4',
+                    surface: '#FFFFFF',
+                    background: '#FAFBFF',
+                    error: '#E53935',
                     success: '#4CAF50',
-                    warning: '#FB8C00',
+                    warning: '#FFB300',
+                    accent: '#FF6584',          // coral accent
                     onPrimary: '#FFFFFF',
                     onSecondary: '#000000',
-                    onBackground: '#000000',
-                    onSurface: '#000000',
+                    onBackground: '#0F1724',
+                    onSurface: '#0F1724',
                 },
             },
             dark: {
                 colors: {
-                    primary: '#BB86FC',       // lighter purple for dark mode
-                    primaryVariant: '#3700B3',
-                    secondary: '#03DAC6',
-                    secondaryVariant: '#03DAC6',
-                    background: '#332940',    // standard Material dark background
-                    surface: '#423E4F',
-                    error: '#CF6679',
-                    success: '#81C784',       // lighter green for dark mode
-                    warning: '#FFB74D',       // softer amber for dark mode
-                    onPrimary: '#000000',
-                    onSecondary: '#000000',
+                    primary: '#A28BFF',         // softer purple for dark
+                    primaryVariant: '#7E63FF',
+                    secondary: '#33E8FF',       // brighter aqua
+                    secondaryVariant: '#11B7D6',
+                    surface: '#24232A',
+                    background: '#0F1020',
+                    error: '#FF6B6B',
+                    success: '#66D19E',
+                    warning: '#FFB86B',
+                    accent: '#FF8DAA',          // warmer accent for dark
+                    onPrimary: '#0F1020',
+                    onSecondary: '#0F1020',
                     onBackground: '#FFFFFF',
                     onSurface: '#FFFFFF',
                 },
