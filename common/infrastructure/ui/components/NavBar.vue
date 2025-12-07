@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { navigateTo } from '#app';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useThemeStore } from '../stores/theme';
 import { useDrawerStore } from '../stores/drawer';
 import {useUserSession} from '#imports';
@@ -98,7 +98,7 @@ async function search() {
   await navigateTo({
     path: '/search',
     query: { query: searchQuery.value },
-  }, { external: true});
+  }, { external: true });
 }
 
 onMounted(() => {
@@ -108,6 +108,7 @@ onMounted(() => {
 });
 
 watch(() => route.query.query, (newQuery) => {
+  console.log(route.query);
   if (newQuery) {
     searchQuery.value = String(newQuery);
   } else {

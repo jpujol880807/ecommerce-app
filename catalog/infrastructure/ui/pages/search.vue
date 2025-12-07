@@ -227,7 +227,7 @@ async function fetchProducts() {
     searchStore.page = res.page || searchStore.page;
     searchStore.limit = res.limit || searchStore.limit;
   } catch (e: any) {
-    error.value = e?.message || 'Error al cargar productos';
+    error.value = e?.message || 'Problem loading products.';
   } finally {
     loading.value = false;
   }
@@ -237,7 +237,7 @@ async function fetchProducts() {
 watch(() => searchStore.page, () => {
   syncUrlFromStore();
   fetchProducts();
-});
+}, { immediate: true });
 
 // Si `SearchFilters` emite cambios de filtros
 function onFiltersChanged(newFilters: any) {
@@ -255,6 +255,13 @@ function onSortByChanged(newSortBy: typeof searchStore.sortBy) {
   syncUrlFromStore();
   fetchProducts();
 }
+
+watch(() => route.query.query, (newQuery) => {
+  if (route.name === 'search' && newQuery) {
+    syncStoreFromUrl();
+    fetchProducts();
+  }
+}, { immediate: true });
 
 onMounted(() => {
   syncStoreFromUrl();

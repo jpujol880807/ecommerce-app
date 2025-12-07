@@ -39,9 +39,12 @@ export class AlgoliaProductSearchService implements SearchProductService {
     }
 
     async search(criteria: SearchProductsCriteria): Promise <{ results: SearchProductResult[]; total: number; totalPages: number; page: number }> {
+        const hitsPerPage = criteria.limit || 10;
+        const pageIndex = criteria.page > 0 ? criteria.page - 1 : 0;
+
         const searchParams: Record<string, any> = {
-            hitsPerPage: criteria.limit || 10,
-            page: criteria.page ? Math.floor(criteria.page / (criteria.limit || 10)) : 0,
+            hitsPerPage,
+            page: pageIndex,
         };
 
         const filters = ['price_cents > 0'];
@@ -84,7 +87,7 @@ export class AlgoliaProductSearchService implements SearchProductService {
         const hits = searchResponse.hits;
         const nbHits = searchResponse.nbHits;
         const nbPages = searchResponse.nbPages;
-        const page = searchResponse.page;
+        const page = searchResponse.page ? searchResponse.page + 1 : 0;
 
         return {
             results: hits.map(hit => new SearchProductResult({
@@ -114,7 +117,7 @@ export class AlgoliaProductSearchService implements SearchProductService {
             })),
             total: nbHits || 0,
             totalPages: nbPages || 0,
-            page: page || 0,
+            page: page,
         };
     }
 }

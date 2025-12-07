@@ -8,16 +8,12 @@
     >
     </v-badge>
     <v-img
-        v-if="hydratedProduct.primaryImageUrl"
-        :src="hydratedProduct.primaryImageUrl || ''"
+        :src="hydratedProduct.primaryImageUrl || '/image/no-image-medium.png'"
         height="200"
         class="ma-4 text-right"
     >
       <v-btn :icon="'mdi-heart-outline'"></v-btn>
     </v-img>
-    <div v-else class="d-flex align-center justify-center ma-4" style="height: 200px;">
-      <v-icon size="200">mdi mdi-image-off-outline</v-icon>
-    </div>
     <v-card-item class="mt-n4">
       <v-card-text class="text-end"><b class="product-description">{{ hydratedProduct.brand?.name ? hydratedProduct.brand.name : 'Unknown Brand'}}</b></v-card-text>
       <v-card-title class="text-center">{{ hydratedProduct.title }}</v-card-title>

@@ -59,7 +59,8 @@
                   <v-avatar
                       size="200px"
                   >
-                    <v-img v-if="subcategory.images.length" :src="subcategory.images[0].urlMedium" height="200px"></v-img>
+                    <v-img v-if="subcategory.images.length" :src="subcategory.images[0]?.urlMedium || '/image/no-image-medium.png'" height="200px"></v-img>
+                    <v-img v-else src="/image/no-image-medium.png" height="200px"></v-img>
                   </v-avatar>
                 </div>
                 <v-card-title class="text-center">{{ subcategory.name }}</v-card-title>

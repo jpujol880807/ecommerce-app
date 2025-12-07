@@ -10,6 +10,7 @@
           density="compact"
           color="primary"
           class="my-n1"
+          @change="emitChange"
       />
     </section>
 
@@ -25,6 +26,7 @@
           density="compact"
           color="primary"
           class="my-2"
+          @change="emitChange"
       />
     </section>
 
@@ -37,7 +39,7 @@
           v-for="rating in [4, 3, 2, 1]"
           :key="rating"
           class="d-flex align-center cursor-pointer rating-row mb-1"
-          @click="search.minRating = rating"
+          @click="search.minRating = rating; emitChange()"
       >
         <v-rating
             :model-value="rating"
@@ -108,7 +110,7 @@
         <v-chip size="x-small" class="mr-2" color="primary" variant="tonal">
           Selected
         </v-chip>
-        <v-btn size="x-small" variant="text" @click="search.brandId = null">Clear</v-btn>
+        <v-btn size="x-small" variant="text" @click="search.brandId = null; emitChange();">Clear</v-btn>
       </div>
 
       <v-alert v-if="brandError" type="error" dense class="mb-2">
@@ -127,6 +129,7 @@
             :value="brand.id"
             color="primary"
             class="my-n1"
+            @change="emitChange"
         />
       </v-radio-group>
     </section>
@@ -167,13 +170,9 @@ const emit = defineEmits<{
   (e: 'change', payload: Record<string, any>): void
 }>()
 
-// --- Store ---
 const search = useSearchStore()
-
-// --- Route ---
 const route = useRoute()
 
-// --- Local UI state ---
 const filters = reactive({
   deals: false,
   freeShipping: false,
@@ -181,7 +180,6 @@ const filters = reactive({
   selectedColor: null as string | null,
 })
 
-// Brands search state
 const brandQuery = ref('')
 const availableBrands = ref<{ id: string; name: string }[]>([])
 const brandLoading = ref(false)
@@ -197,7 +195,6 @@ const availableColors = [
   { name: 'Silver', hex: '#C0C0C0' },
 ]
 
-// --- Helpers ---
 const parseBool = (v: any) => v === true || v === 'true' || v === '1' || v === 1
 const toNumberOrNull = (v: any) => {
   const n = Number(v)
@@ -218,12 +215,9 @@ const normalizePayload = () => ({
 
 const emitChange = () => emit('change', normalizePayload())
 
-// --- UI actions ---
-// En lugar de bindear directamente a search.minPrice y search.maxPrice
 const tempMinPrice = ref<number | null>(null)
 const tempMaxPrice = ref<number | null>(null)
 
-// Modificar la función applyPriceFilter para actualizar el store
 const applyPriceFilter = () => {
   search.minPrice = tempMinPrice.value
   search.maxPrice = tempMaxPrice.value
@@ -239,7 +233,6 @@ const isLightColor = (hex: string) => {
   return luminance > 186
 }
 
-// --- Brands fetch ---
 async function fetchBrands(query = '') {
   brandLoading.value = true
   brandError.value = null
@@ -261,42 +254,50 @@ async function ensureSelectedBrandPresent() {
   if (!search.brandId) return
   const exists = availableBrands.value.find(b => b.id === search.brandId)
   if (exists) return
-  // intentar obtener la marca por id; endpoint puede variar según API
   try {
     const single: any = await $fetch(`/api/brands/${search.brandId}`)
     if (single && single.id) {
-      // evitar duplicados
       if (!availableBrands.value.find(b => b.id === single.id)) {
         availableBrands.value.unshift({ id: single.id, name: single.name ?? single.title ?? 'Selected' })
       }
     }
   } catch {
-    // si falla, insertar placeholder para que el radio muestre una selección conocida
     availableBrands.value.unshift({ id: search.brandId, name: 'Selected brand' })
   }
 }
 
 const isSyncing = ref(false);
-// --- Sync from URL query into store/local state ---
+
+// --- IMPORTANT FIX ---
+// No llamar a emitChange() desde aquí; usar isSyncing para bloquear el watchEffect.
+// watchEffect emitirá una única vez cuando isSyncing pase a false.
 async function syncFromQuery(q: Record<string, any>) {
   isSyncing.value = true
-  // mapear query -> store / local
+
   if (q.minPrice !== undefined) {
     const price = toNumberOrNull(q.minPrice)
     search.minPrice = price
     tempMinPrice.value = price
+  } else {
+    tempMinPrice.value = search.minPrice ?? null
   }
+
   if (q.maxPrice !== undefined) {
     const price = toNumberOrNull(q.maxPrice)
     search.maxPrice = price
     tempMaxPrice.value = price
+  } else {
+    tempMaxPrice.value = search.maxPrice ?? null
   }
+
   if (q.minRating !== undefined) search.minRating = toNumberOrNull(q.minRating)
   if (q.brandId !== undefined) search.brandId = String(q.brandId) || null
   if (q.hasDiscount !== undefined) {
     const b = parseBool(q.hasDiscount)
     search.hasDiscount = b ? true : null
     filters.deals = b
+  } else {
+    filters.deals = !!search.hasDiscount
   }
   if (q.freeShipping !== undefined) filters.freeShipping = parseBool(q.freeShipping)
   if (q.color !== undefined) filters.selectedColor = String(q.color) || null
@@ -305,12 +306,9 @@ async function syncFromQuery(q: Record<string, any>) {
     else filters.selectedFeatures = String(q.features).split(',').map(s => s.trim()).filter(Boolean)
   }
 
-  // cargar marcas y asegurar la seleccion visible
   await fetchBrands('')
   await ensureSelectedBrandPresent()
-
-  isSyncing.value = false;
-  emitChange()
+  isSyncing.value = false
 }
 
 // Debounced watcher for brandQuery
@@ -321,34 +319,17 @@ watch(brandQuery, (q) => {
   }, 300)
 })
 
-// Sync deals/todaysDeals into store.hasDiscount
+// Sync deals into store
 watch(() => filters.deals, () => {
   const val = filters.deals;
   search.hasDiscount = val ? true : null
 })
 
-// Emit cuando filtros (store o locales) cambian
-watchEffect(() => {
-  if (isSyncing.value) return;
-  void search.brandId
-  void search.minPrice
-  void search.maxPrice
-  void search.minRating
-  void search.hasDiscount
-  void filters.deals
-  void filters.freeShipping
-  void filters.selectedColor
-  void filters.selectedFeatures
-  emitChange()
-})
-
-// React a cambios en la query de la ruta (p.ej. navegación con parámetros)
+// React a cambios en la query de la ruta
 watch(() => route.query, (newQ) => {
-  // convertir a objeto plano
   syncFromQuery(Object.fromEntries(Object.entries(newQ)))
 }, { deep: true })
 
-// Emit initial filtros y cargar marcas al montar
 onMounted(() => {
   syncFromQuery(Object.fromEntries(Object.entries(route.query)))
 })

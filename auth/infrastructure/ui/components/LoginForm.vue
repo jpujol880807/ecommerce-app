@@ -26,7 +26,7 @@
         ></v-text-field>
         <v-row class="mt-4">
           <v-col cols="6">
-            <v-checkbox label="Remember Me" class="mt-n1" color="primary" density="compact"></v-checkbox>
+            <v-checkbox label="Remember Me" class="mt-n1" color="primary" density="compact" v-model="loginCredentials.remember"></v-checkbox>
           </v-col>
           <v-col cols="6" class="pt-4">
             <span class="caption text-primary" style="font-size: 17px;">Forgot Password</span>
@@ -77,7 +77,8 @@ const formRef = useTemplateRef<FormWithValidate>('loginForm');
 const {loggedIn, user, fetch: refreshSession} = useUserSession();
 const loginCredentials = reactive({
   email: '',
-  password: ''
+  password: '',
+  remember: false
 });
 
 const loginSchema = z.object({
