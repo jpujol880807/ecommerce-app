@@ -1,6 +1,12 @@
 ```vue
 <template>
-  <v-card :class="[customClass, 'product-card mx-auto my-12 pb-4 rounded-lg']" width="324" elevation="2">
+  <v-card
+      :class="[customClass, 'product-card mx-auto my-12 pb-4 rounded-lg cursor-pointer']"
+      width="324"
+      elevation="2"
+      link
+      :to="`/products/${hydratedProduct.id}`"
+  >
     <v-badge
         v-if="hydratedProduct.discountPercentage > 0"
         :content="`${hydratedProduct.discountPercentage}% OFF`"
@@ -12,7 +18,7 @@
     <div class="image-wrap">
       <v-img
           :src="hydratedProduct.primaryImageUrl || '/image/no-image-medium.png'"
-          height="324"
+          height="250"
           class="product-image"
           cover
       >

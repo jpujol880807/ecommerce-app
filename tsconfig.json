@@ -16,11 +16,7 @@
     }
   ],
   "compilerOptions": {
-    "paths": {
-      "#imports": [".nuxt/imports.d.ts"]
-    },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "baseUrl": "."
+    "emitDecoratorMetadata": true
   }
 }

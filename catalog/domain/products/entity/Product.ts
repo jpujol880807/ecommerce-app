@@ -137,7 +137,7 @@ export class Product {
         );
 
         product.images = data.images.map((i: any) => ProductImage.fromJSON(i)) || [];
-        product.variations = data.variations || [];
+        product.variations = data.variations.map((v: any) => ProductVariation.fromJSON(v)) || [];
         product.categories = data.categories || [];
 
         return product;

@@ -113,7 +113,7 @@ async function indexAllProducts() {
         const productImagesData = await db
             .select({
                 product_id: productImages.product_id,
-                url: sql<string>`COALESCE(${productImages.url_large}, ${productImages.url_medium}, ${productImages.url_small}, ${productImages.url_original})`.as('url'),
+                url: productImages.url_medium,
             })
             .from(productImages)
             .where(eq(productImages.position, 0))

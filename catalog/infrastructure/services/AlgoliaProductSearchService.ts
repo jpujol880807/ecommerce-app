@@ -38,7 +38,7 @@ export class AlgoliaProductSearchService implements SearchProductService {
         this.client = clientFactory.getClient();
     }
 
-    async search(criteria: SearchProductsCriteria): Promise <{ results: SearchProductResult[]; total: number; totalPages: number; page: number }> {
+    async search(criteria: SearchProductsCriteria): Promise <{ results: SearchProductResult[]; total: number; totalPages: number; page: number; limit: number; }> {
         const hitsPerPage = criteria.limit || 10;
         const pageIndex = criteria.page > 0 ? criteria.page - 1 : 0;
 
@@ -118,6 +118,7 @@ export class AlgoliaProductSearchService implements SearchProductService {
             total: nbHits || 0,
             totalPages: nbPages || 0,
             page: page,
+            limit: hitsPerPage,
         };
     }
 }

@@ -2,19 +2,7 @@
   <v-container>
     <v-row>
       <v-col class="text-center" cols="12">
-        <v-skeleton-loader v-if="loadingPath" type="heading"></v-skeleton-loader>
-        <v-breadcrumbs v-else :items="breadcrumbs" divider=">">
-          <template #item="{ item, index }">
-            <v-breadcrumbs-item
-                :key="index"
-                :href="item.href"
-                :disabled="index === breadcrumbs.length - 1"
-            >
-              {{ item.title }}
-            </v-breadcrumbs-item>
-          </template>
-        </v-breadcrumbs>
-
+        <CategoryBreadcrumbs :slug="slug" />
         <v-skeleton-loader v-if="loadingCategory" type="heading"></v-skeleton-loader>
         <h1 v-else-if="category">{{ category.name }}</h1>
       </v-col>
@@ -27,7 +15,7 @@
               :key="i"
               cover
           >
-            <v-img :src="image.urlLarge" height="400px"></v-img>
+            <v-img :src="image.urlLarge || ''" height="400px"></v-img>
           </v-carousel-item>
         </v-carousel>
       </v-col>
@@ -36,7 +24,7 @@
     <v-row>
       <v-col cols="12">
         <h2 class="section-title" v-if="!loadingSubcategories && subcategories.length">Child Categories</h2>
-        <v-slide-group center-active active-class="border-primary" min-width="100%">
+        <v-slide-group center-active active-class="border-primary" min-width="100%" show-arrows>
           <template v-if="loadingSubcategories">
             <v-slide-group-item
                 v-for="n in 4"
@@ -110,10 +98,12 @@
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue';
 import {useRoute} from 'vue-router';
-import {Category} from '../../../../domain/categories/entity/Category';
 import SliderProductCard from '../../components/SliderProductCard.vue';
-import {SearchProductResult} from '../../../../domain/products/entity/SearchProductResult';
-import {Product} from '../../../../domain/products/entity/Product';
+import {Category} from '~~/catalog/domain/categories/entity/Category';
+import {Product} from '~~/catalog/domain/products/entity/Product';
+import {SearchProductResult} from '~~/catalog/domain/products/entity/SearchProductResult';
+import CategoryBreadcrumbs from '#layers/Catalog/app/components/CategoryBreadcrumbs.vue';
+
 
 const route = useRoute();
 const slug = route.params.id as string;

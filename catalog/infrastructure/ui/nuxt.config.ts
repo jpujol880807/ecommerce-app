@@ -1,5 +1,16 @@
 import { defineNuxtConfig } from 'nuxt/config';
 export default defineNuxtConfig({
-    components: true,
-    pages: true,
+   typescript: {
+       includeWorkspace: true,
+       sharedTsConfig: {
+           compilerOptions: {
+               experimentalDecorators: true,
+               emitDecoratorMetadata: true,
+               esModuleInterop: true
+           }
+       }
+   },
+    $meta: {
+        name: 'Catalog',
+    }
 })

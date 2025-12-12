@@ -375,45 +375,107 @@ export class SqliteProductsRepository implements ProductsRepository {
             ));
         }
 
-        // Cargar variantes con sus opciones
-        const variantRows = await this.db
-            .select()
-            .from(productVariants)
-            .where(eq(productVariants.product_id, productRow.id));
+        const optionRows = await this.db
+            .select({
+                id: productOptions.id,
+                name: productOptions.name,
+                code: productOptions.code,
+                display_type: productOptions.display_type
+            })
+            .from(productOptions)
+            .where(eq(productOptions.product_id, productRow.id))
+            .orderBy(productOptions.position);
 
-        for (const variant of variantRows) {
-            const variantOptions = await this.db
+        for (const opt of optionRows) {
+            const variation = new ProductVariation(
+                opt.name || '',
+                opt.code || '',
+                opt.display_type || 'select',
+                'scrap'
+            );
+
+            const valueRows = await this.db
                 .select({
-                    optionCode: productOptions.code,
-                    value: optionValues.value
+                    id: optionValues.id,
+                    value: optionValues.value,
+                    label: optionValues.label,
+                    option_code: optionValues.option_code
                 })
-                .from(variantOptionValues)
-                .innerJoin(productOptions, eq(variantOptionValues.option_id, productOptions.id))
-                .innerJoin(optionValues, eq(variantOptionValues.option_value_id, optionValues.id))
-                .where(eq(variantOptionValues.variant_id, variant.id));
+                .from(optionValues)
+                .where(eq(optionValues.option_id, opt.id))
+                .orderBy(optionValues.position);
 
-            const options: Record<string, string> = {};
-            variantOptions.forEach(vo => {
-                options[vo.optionCode] = vo.value;
-            });
+            for (const val of valueRows) {
+                // obtener mappings en variant_option_values para esta option_value
+                const mappingRows = await this.db
+                    .select({ variantId: variantOptionValues.variant_id })
+                    .from(variantOptionValues)
+                    .where(eq(variantOptionValues.option_value_id, val.id));
 
-            product.addVariation(new ProductVariation(
-                variant.id,
-                variant.product_id,
-                variant.sku,
-                variant.inventory_count || 0,
-                Boolean(variant.is_available),
-                Boolean(variant.is_selected),
-                variant.weight_grams || undefined,
-                variant.barcode || undefined,
-                variant.fulfilled_by || undefined,
-                variant.sold_by || undefined,
-                variant.vendor_delivery_day || undefined,
-                Boolean(variant.is_active),
-                options,
-                new Date(variant.created_at),
-                new Date(variant.updated_at)
-            ));
+                // defaults
+                let sku = '';
+                let selected = false;
+                let available = false;
+                let images: string[] = [];
+                let fulfillBy: string | null = null;
+                let soldBy: string | null = null;
+                let vendorDeliveryDay: string | null = null;
+                let stockBool = false;
+                let optionProductId = productRow.id; // fallback al producto principal
+
+                if (mappingRows.length) {
+                    const variantId = mappingRows[0]!!.variantId;
+
+                    // obtener fila de la variante para extraer sku, stock, delivery y product_id
+                    const variantRow = await this.db
+                        .select({
+                            id: productVariants.id,
+                            sku: productVariants.sku,
+                            inventory_count: productVariants.inventory_count,
+                            is_available: productVariants.is_available,
+                            is_selected: productVariants.is_selected,
+                            fulfilled_by: productVariants.fulfilled_by,
+                            sold_by: productVariants.sold_by,
+                            vendor_delivery_day: productVariants.vendor_delivery_day,
+                            product_id: productVariants.product_id
+                        })
+                        .from(productVariants)
+                        .where(eq(productVariants.id, variantId))
+                        .limit(1);
+
+                    if (variantRow.length) {
+                        const v = variantRow[0]!!;
+                        sku = v.sku || '';
+                        selected = Boolean(v.is_selected);
+                        available = Boolean(v.is_available);
+                        fulfillBy = v.fulfilled_by || null;
+                        soldBy = v.sold_by || null;
+                        vendorDeliveryDay = v.vendor_delivery_day || null;
+                        stockBool = (v.inventory_count || 0) > 0;
+                        optionProductId = v.product_id || productRow.id; // aquí se asigna el productId correcto
+                    }
+                }
+
+                variation.addOption({
+                    sku,
+                    optionCode: val.option_code || '',
+                    label: val.label || val.value || '',
+                    selected,
+                    available,
+                    images,
+                    deliveryData: {
+                        fulfillBy,
+                        soldBy,
+                        vendorDeliveryDay
+                    },
+                    availability: {
+                        stock: stockBool
+                    },
+                    productId: optionProductId
+                });
+            }
+
+            product.addVariation(variation);
         }
 
         return product;

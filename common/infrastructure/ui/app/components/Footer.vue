@@ -51,7 +51,7 @@
   </v-footer>
 </template>
 <script setup lang="ts">
-import {useThemeStore} from '~~/common/infrastructure/ui/stores/theme';
+import {useThemeStore} from '~~/common/infrastructure/ui/app/stores/theme';
 import {computed} from 'vue';
 
 const themeStore = useThemeStore();

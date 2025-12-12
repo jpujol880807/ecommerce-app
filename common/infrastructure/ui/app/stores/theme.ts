@@ -4,9 +4,9 @@ import {useTheme} from 'vuetify';
 
 export const useThemeStore = defineStore('theme', () => {
     const theme = useTheme();
-    const cookie = useCookie('theme');
+    const cookie = useCookie<{darkMode: string} | null>('theme');
     const initialTheme = cookie.value?.darkMode ? 'dark' : 'light';
-    const darkMode =  initialTheme === 'dark' ? ref(theme.global.current.value.dark) : ref(theme.global.current.value.ligth);
+    const darkMode =  ref(initialTheme === 'dark');
     theme.change(initialTheme);
     watch(darkMode, (newValue) => {
         theme.change(newValue ? 'dark' : 'light');

@@ -1,4 +1,4 @@
-import {Algoliasearch, algoliasearch, SearchClient} from 'algoliasearch';
+import {type Algoliasearch, algoliasearch, type SearchClient} from 'algoliasearch';
 import {injectable} from 'inversify';
 
 @injectable()

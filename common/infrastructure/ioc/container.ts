@@ -24,6 +24,7 @@ import {GetPathFromRootUseCase} from '~~/catalog/application/categories/use-case
 import {GetImmediateChildrenUseCase} from '~~/catalog/application/categories/use-cases/GetImmediateChildrenUseCase';
 import {GetCategoryUseCase} from '~~/catalog/application/categories/use-cases/GetCategoryUseCase';
 import {GetByCategoryIdUseCase} from '~~/catalog/application/products/use-cases/GetByCategoryIdUseCase';
+import {GetProductByIdUseCase} from '~~/catalog/application/products/use-cases/GetProductByIdUseCase';
 
 const container = new Container({defaultScope: 'Singleton'});
 
@@ -53,6 +54,7 @@ container.bind<GetFeaturedProductsUseCase>(TYPES.GetFeaturedProductsUseCase).to(
 container.bind<GetPopularProductsUseCase>(TYPES.GetPopularProductsUseCase).to(GetPopularProductsUseCase);
 container.bind<SearchProductsUseCase>(TYPES.SearchProductsUseCase).to(SearchProductsUseCase);
 container.bind<GetByCategoryIdUseCase>(TYPES.GetByCategoryIdUseCase).to(GetByCategoryIdUseCase);
+container.bind<GetProductByIdUseCase>(TYPES.GetProductByIdUseCase).to(GetProductByIdUseCase);
 // Brands bindings
 container.bind<BrandsRepository>(TYPES.BrandsRepository).to(SqliteBrandsRepository);
 container.bind<SearchBrandUseCase>(TYPES.SearchBrandsUseCase).to(SearchBrandUseCase);

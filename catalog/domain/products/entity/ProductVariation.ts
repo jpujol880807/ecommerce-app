@@ -1,24 +1,50 @@
-// typescript
-import { VariationOption } from './VariationOption';
+// TypeScript
+import type { VariationOption } from './VariationOption';
 
 export class ProductVariation {
     public options: VariationOption[] = [];
 
     constructor(
-        public id: string,
-        public productId: string,
-        public sku: string,
-        public inventoryCount: number = 0,
-        public isAvailable: boolean = true,
-        public isSelected: boolean = false,
-        public weightGrams?: number,
-        public barcode?: string,
-        public fulfilledBy?: string,
-        public soldBy?: string,
-        public vendorDeliveryDay?: string,
-        public isActive: boolean = true,
-        public metaData: Record<string, any> = {},
-        public createdAt: Date = new Date(),
-        public updatedAt: Date = new Date()
+        public variationLabel: string,
+        public variationCode: string,
+        public variationDisplayType: string = 'select',
+        public variationAction: string = 'scrap'
     ) {}
+
+    addOption(option: VariationOption): void {
+        this.options.push(option);
+    }
+
+    static fromJSON(json: any): ProductVariation {
+        const variation = new ProductVariation(
+            json.variationLabel,
+            json.variationCode,
+            json.variationDisplayType,
+            json.variationAction
+        );
+
+        if (Array.isArray(json.options)) {
+            json.options.forEach((opt: any) => {
+                variation.addOption({
+                    sku: opt.sku,
+                    optionCode: opt.optionCode,
+                    label: opt.label,
+                    selected: opt.selected,
+                    available: opt.available,
+                    images: opt.images || [],
+                    deliveryData: {
+                        fulfillBy: opt.deliveryData?.fulfillBy || null,
+                        soldBy: opt.deliveryData?.soldBy || null,
+                        vendorDeliveryDay: opt.deliveryData?.vendorDeliveryDay || null,
+                    },
+                    availability: {
+                        stock: opt.availability?.stock || false,
+                    },
+                    productId: opt.productId,
+                });
+            });
+        }
+
+        return variation;
+    }
 }

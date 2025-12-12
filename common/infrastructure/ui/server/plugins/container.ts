@@ -1,10 +1,9 @@
-import container from '~~/common/infrastructure/ioc/container';
-import {DatabaseFactory} from '~~/common/infrastructure/db/drizzle/DatabaseFactory';
-import {TYPES} from '~~/common/infrastructure/ioc/types';
+import container from '../../../ioc/container';
+import {DatabaseFactory} from '../../../db/drizzle/DatabaseFactory';
+import {TYPES} from '../../../ioc/types';
+import {AlgoliaFactory} from '../../../search/algolia/AlgoliaFactory';
 import {ScryptPasswordService} from '~~/auth/infrastructure/services/ScryptPasswordService';
-import {PasswordService} from '~~/auth/domain/users/services/PasswordService';
-import {defineNitroPlugin, useRuntimeConfig} from '#imports';
-import {AlgoliaFactory} from '~~/common/infrastructure/search/algolia/AlgoliaFactory';
+import type {PasswordService} from '~~/auth/domain/users/services/PasswordService';
 
 export default defineNitroPlugin((nitroApp) => {
     const config = useRuntimeConfig();

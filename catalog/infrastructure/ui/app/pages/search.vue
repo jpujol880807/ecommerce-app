@@ -27,8 +27,8 @@
         </template>
         <v-list density="compact">
           <v-list-item
-              v-for="(item) in sortItems"
-              :key="item.value"
+              v-for="(item, i) in sortItems"
+              :key="`sort-item-${i}`"
               @click="onSortByChanged(item.value)"
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -65,14 +65,16 @@
             <v-col cols="12" md="12" lg="8" xl="10" class="results-col">
               <v-row>
                 <v-row justify="center" v-if="loading" class="skeleton-row">
-                  <v-col v-for="n in skeletonCount" :key="n" cols="auto">
-                    <v-card class="skeleton-card mx-auto my-12 pb-4" width="324" elevation="2">
-                      <v-skeleton-loader class="mb-2" type="image" height="200" />
-                      <v-skeleton-loader class="mb-1 mx-auto" type="text" />
-                      <v-skeleton-loader class="mx-auto" type="sentences" />
-                      <v-skeleton-loader class="mx-4" type="actions" />
-                    </v-card>
-                  </v-col>
+                  <ClientOnly>
+                    <v-col v-for="n in skeletonCount" :key="n" cols="auto">
+                      <v-card class="skeleton-card mx-auto my-12 pb-4" width="324" elevation="2">
+                        <v-skeleton-loader class="mb-2" type="image" height="200" />
+                        <v-skeleton-loader class="mb-1 mx-auto" type="text" />
+                        <v-skeleton-loader class="mx-auto" type="sentences" />
+                        <v-skeleton-loader class="mx-4" type="actions" />
+                      </v-card>
+                    </v-col>
+                  </ClientOnly>
                 </v-row>
 
                 <v-row v-else justify="center" class="products-grid">
@@ -196,7 +198,7 @@ async function fetchProducts() {
     };
 
     // Use nuxtApp.$fetch to satisfy TypeScript and runtime
-    const res = await $fetch('/api/products/search', { method: 'POST', body });
+    const res = await $fetch('/api/search', { method: 'POST', body });
     products.value = res.results || [];
     searchStore.total = res.total || 0;
     searchStore.page = res.page || searchStore.page;

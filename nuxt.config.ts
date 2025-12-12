@@ -1,8 +1,15 @@
 import {md3} from 'vuetify/blueprints'
 
 export default defineNuxtConfig({
-    extends: ['./auth/infrastructure/ui', './catalog/infrastructure/ui', 'common/infrastructure/ui'],
+    extends: ['common/infrastructure/ui', './auth/infrastructure/ui', './catalog/infrastructure/ui'],
     modules: ['@pinia/nuxt', 'nuxt-auth-utils', 'vuetify-nuxt-module','pinia-plugin-persistedstate/nuxt'],
+    srcDir: 'common/infrastructure/ui/',
+    components: [
+        'common/infrastructure/ui/app/components',
+        'auth/infrastructure/ui/app/components',
+        'catalog/infrastructure/ui/app/components'
+    ],
+    serverDir: 'common/infrastructure/ui/server/',
     vite: {
         esbuild: {
             tsconfigRaw: {
