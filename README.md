@@ -128,8 +128,7 @@ Track your progress on this e-commerce app. Mark items as complete by replacing 
 
 ### Phase 1: Foundation & Authentication
 - [x] User authentication (login, signup, password reset)
-- [ ] Email verification system
-- [ ] JWT token management
+- [x] Github OAuth integration
 - [ ] User profile management
 - [ ] Password reset functionality
 
@@ -234,7 +233,7 @@ Track your progress on this e-commerce app. Mark items as complete by replacing 
 
 **Current Status**: 
 
-- Phase 1 - Foundation & Authentication (20% complete) 
+- Phase 1 - Foundation & Authentication (50% complete) 
 - Phase 2 - Product Catalog (100% complete)
 - Phase 3 - Category Management (100% complete)
 

@@ -46,15 +46,17 @@
           </v-col>
         </v-row>
         <h5 class="text-center grey--text mt-6 mb-4">Or Login using</h5>
-        <div class="d-flex justify-space-evenly mx-lg-10 mx-md-4 mx-sm-4 mb-16">
-          <v-btn outlined depressed>
-            <v-icon color="blue darken-4">mdi-facebook</v-icon>
-          </v-btn>
-          <v-btn outlined depressed>
-            <v-icon color="red darken-1">mdi-google</v-icon>
-          </v-btn>
-          <v-btn outlined depressed>
-            <v-icon color="black lighten-2">mdi-github</v-icon>
+        <div class="d-flex justify-center mx-lg-10 mx-md-4 mx-sm-4 mb-16">
+          <v-btn
+              dark
+              rounded
+              block
+              class="mx-auto"
+              href="/api/oauth/github"
+              aria-label="Login with Github"
+          >
+            <v-icon left>mdi-github</v-icon>
+            Github
           </v-btn>
         </div>
       </v-col>
@@ -67,13 +69,14 @@ import {reactive, ref, useTemplateRef} from 'vue';
 import {z} from 'zod/v4';
 import {useUserSession, navigateTo} from '#imports';
 
+
 type FormWithValidate = { validate: () => boolean };
 
 const isLoading = ref(false);
 const dialog = ref(false);
 const errorText = ref('Invalid email or password. Please try again.');
 const formRef = useTemplateRef<FormWithValidate>('loginForm');
-const {loggedIn, user, fetch: refreshSession} = useUserSession();
+const {loggedIn, user, fetch: refreshSession, openInPopup} = useUserSession();
 const loginCredentials = reactive({
   email: '',
   password: '',

@@ -206,9 +206,10 @@
                       outlined
                   />
                 </v-col>
+                <v-col cols="12" md="8"></v-col>
 
                 <!-- CTA buttons full width -->
-                <v-col cols="12" class="mt-4">
+                <v-col cols="12" xs="12" md="6" class="mt-xs-4">
                   <v-btn
                       large
                       block
@@ -218,17 +219,19 @@
                   >
                     ADD TO CART
                   </v-btn>
-
+                </v-col>
+                <v-col cols="12" xs="12" md="6" class="mt-xs-4">
                   <v-btn
                       large
                       block
-                      class="btn-buy mt-3 bg-success"
+                      class="btn-buy bg-success"
                       :disabled="!inStock"
                       @click="onBuyNow"
                   >
                     Buy with shop Pay
                   </v-btn>
-
+                </v-col>
+                <v-col cols="12">
                   <div class="text-center mt-2">
                     <a class="grey--text text--darken-1" href="#">More payment options</a>
                   </div>
@@ -448,7 +451,6 @@ const onBuyNow = () => {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(180deg, #f0f3f8 0%, #ffffff 100%);
 }
 
 /* arrows */

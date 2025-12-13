@@ -83,7 +83,7 @@ import { useThemeStore } from '../stores/theme';
 import { useDrawerStore } from '../stores/drawer';
 import {useUserSession} from '#imports';
 
-const {loggedIn, clear} = useUserSession();
+const {loggedIn, clear, fetch} = useUserSession();
 const themeStore = useThemeStore();
 const drawerStore = useDrawerStore();
 const route = useRoute();
@@ -91,7 +91,8 @@ const searchQuery = ref('');
 
 async function logout() {
   await clear();
-  await navigateTo('/login');
+  await fetch();
+  await navigateTo('/login', { replace: true });
 }
 
 async function search() {
